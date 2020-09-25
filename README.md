@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+This update was made by Nikhil.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
