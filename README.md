@@ -1,6 +1,6 @@
 # khangout
 
-A new Flutter project.
+Kalamazoo + Hangout
 
 testing
 
