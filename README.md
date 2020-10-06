@@ -2,20 +2,26 @@
 
 Kalamazoo + Hangout
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
 ## Purpose
 
 KHangout is an application designed to enhance student interaction at Kalamazoo College. The platform
 allows students to view/create hangout opportunites..
+
+## Getting Started
+
+View https://flutter.dev/docs/get-started/install to install Flutter, Android Studio, Xcode
+  - Flutter 1.22.0
+  - Android Studio 4.0.1
+  - Xcode 12.0.1
+
+## How to run
+
+After succesfully install Android Studio and Xcode, set up Android and iOS emulator
+  - Mac
+    - Use command `open -a Simulator`
+    - Make sure your simulator is using 64bit device (check Hardcare > Device)
+    
+  - Windows
+    - Launch Android studio > AVD Manager > Create Virtual Device 
+    - Choose a device definition > Next > Select system image (x86 or x86_64 is recommended) > Next > Finish
+    - AVD Manager > Run
