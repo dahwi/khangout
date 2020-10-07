@@ -121,7 +121,30 @@ class _FillOutPageState extends State<FillOutPage> {
       appBar: new AppBar(
         title: new Text("Fillout Page"),
       ),
-      body: new Text("Fill out your hangout information"),
+      body: Form(
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              decoration: const InputDecoration(
+                  icon: Icon(Icons.person),
+                  hintText: 'Enter your name',
+                  labelText: 'Name'),
+              validator: (String value) {
+                return value.isEmpty ? 'Please enter some text' : null;
+              },
+            ),
+            TextFormField(
+              decoration: const InputDecoration(
+                  icon: Icon(Icons.email),
+                  hintText: 'Enter your email',
+                  labelText: 'Email'),
+              validator: (String value) {
+                return !value.contains('@') ? 'Invalid email address' : null;
+              },
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pop(context);
