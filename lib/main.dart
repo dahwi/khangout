@@ -109,7 +109,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class FillOutPage extends StatelessWidget {
+class FillOutPage extends StatefulWidget {
+  @override
+  _FillOutPageState createState() => _FillOutPageState();
+}
+
+class _FillOutPageState extends State<FillOutPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
