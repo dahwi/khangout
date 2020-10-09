@@ -2,16 +2,10 @@
 
 Kalamazoo + Hangout
 
-<<<<<<< HEAD
-testing
-
-## Getting Started
-=======
 ## Purpose
 
 KHangout is an application designed to enhance student interaction at Kalamazoo College. The platform
 allows students to view/create hangout opportunites..
->>>>>>> c82a36f35b418018b321abdf039630b60e9a677e
 
 ## Getting Started
 
