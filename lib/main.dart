@@ -121,13 +121,76 @@ class _FillOutPageState extends State<FillOutPage> {
       appBar: new AppBar(
         title: new Text("Fillout Page"),
       ),
-      body: new Text("Fill out your hangout information"),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        tooltip: 'Save',
-        child: Icon(Icons.save),
+      body: FilloutForm(),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.pop(context);
+      //   },
+      //   tooltip: 'Save',
+      //   child: Icon(Icons.save),
+      // ),
+    );
+  }
+}
+
+// Define a custom Form widget.
+class FilloutForm extends StatefulWidget {
+  @override
+  FilloutFormState createState() {
+    return FilloutFormState();
+  }
+}
+
+// Define a corresponding State class.
+// This class holds data related to the form.
+class FilloutFormState extends State<FilloutForm> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a `GlobalKey<FormState>`,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: <Widget>[
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.person),
+                hintText: 'Enter your name',
+                labelText: 'Name'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter some text' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.email),
+                hintText: 'Enter your email',
+                labelText: 'Email'),
+            validator: (String value) {
+              return !value.contains('@') ? 'Invalid email address' : null;
+            },
+          ),
+          //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
+          FloatingActionButton(
+              onPressed: () {
+                // Validate returns true if the form is valid, otherwise false.
+                if (_formKey.currentState.validate()) {
+                  // If the form is valid, display a snackbar. In the real world,
+                  // you'd often call a server or save the information in a database.
+
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text('Processing Data')));
+                }
+              },
+              tooltip: 'Save',
+              child: Icon(Icons.save))
+        ],
       ),
     );
   }
