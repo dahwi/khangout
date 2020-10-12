@@ -119,7 +119,7 @@ class _FillOutPageState extends State<FillOutPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Fillout Page"),
+        title: new Text("Create a Meeting"),
       ),
       body: FilloutForm(),
       // floatingActionButton: FloatingActionButton(
@@ -160,23 +160,89 @@ class FilloutFormState extends State<FilloutForm> {
         children: <Widget>[
           TextFormField(
             decoration: const InputDecoration(
-                icon: Icon(Icons.person),
-                hintText: 'Enter your name',
-                labelText: 'Name'),
+                icon: Icon(Icons.title),
+                hintText: 'Add Title',
+                labelText: 'Title'),
             validator: (String value) {
-              return value.isEmpty ? 'Please enter some text' : null;
+              return value.isEmpty ? 'Please enter the titile' : null;
             },
           ),
           TextFormField(
             decoration: const InputDecoration(
-                icon: Icon(Icons.email),
-                hintText: 'Enter your email',
-                labelText: 'Email'),
+                icon: Icon(Icons.description),
+                hintText: 'Add Description',
+                labelText: 'Description'),
             validator: (String value) {
-              return !value.contains('@') ? 'Invalid email address' : null;
+              return value.isEmpty ? 'Please enter the description' : null;
             },
           ),
-          // Text Format options
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.date_range),
+                hintText: 'Add Date',
+                labelText: 'Date'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the date' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.timelapse),
+                hintText: 'Add Time',
+                labelText: 'Time'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the time' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.event_seat),
+                hintText: 'Add Event Type',
+                labelText: 'Type'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the event type' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.location_pin),
+                hintText: 'Add Location',
+                labelText: 'Location'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the location' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.people),
+                hintText: 'Add Participants',
+                labelText: 'Participants'),
+            validator: (String value) {
+              return value.isEmpty
+                  ? 'Please name participants in the meeting'
+                  : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.format_list_numbered),
+                hintText: 'Add max number of participants',
+                labelText: 'Max Number of Participants'),
+            validator: (String value) {
+              return value.isEmpty
+                  ? 'Please enter the max number of participants'
+                  : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.contact_phone),
+                hintText: 'Add contact info',
+                labelText: 'Contact Info'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter contact info' : null;
+            },
+          ),
           //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
           FloatingActionButton(
               onPressed: () {
