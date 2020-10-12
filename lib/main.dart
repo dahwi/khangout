@@ -176,6 +176,7 @@ class FilloutFormState extends State<FilloutForm> {
               return !value.contains('@') ? 'Invalid email address' : null;
             },
           ),
+          // Text Format options
           //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
           FloatingActionButton(
               onPressed: () {
