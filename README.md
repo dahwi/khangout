@@ -33,3 +33,15 @@ After succesfully install Android Studio and Xcode, set up Android and iOS emula
    - Android Studio
       - Select a device in the target selector located in the main Android Studio toolbar
       - Run > Run or Clink the run icon in the toolbar
+
+## Troubleshooting
+
+- warning: Capabilities for Signing & Capabilities may not function correctly
+because its entitlements use a placeholder team ID. To resolve this, select
+a development team in the Runner editor. (in target 'Runner' from project
+'Runner')
+  - This issue was resolved on macOS Catalina version 10.15.6
+  - Run these two commands:
+    - xattr -lr [path_to_Runner.app]
+    - xattr -cr [path_to_Runner.app]
+  
