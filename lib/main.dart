@@ -97,15 +97,30 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            new MaterialPageRoute(builder: (context) => new FillOutPage()),
-          );
+          _navigateAndDisplaySelection(context);
         },
         tooltip: 'Add',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  // A method that launches the FillOutScreen and awaits the
+  // result from Navigator.pop.
+  _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the FillOutScreen in the next step.
+      MaterialPageRoute(builder: (context) => FillOutPage()),
+    );
+
+    // After the FillOut Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    Scaffold.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text("$result")));
   }
 }
 
@@ -122,13 +137,6 @@ class _FillOutPageState extends State<FillOutPage> {
         title: new Text("Fillout Page"),
       ),
       body: FilloutForm(),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.pop(context);
-      //   },
-      //   tooltip: 'Save',
-      //   child: Icon(Icons.save),
-      // ),
     );
   }
 }
@@ -183,9 +191,9 @@ class FilloutFormState extends State<FilloutForm> {
                 if (_formKey.currentState.validate()) {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
-
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
+                  // Scaffold.of(context)
+                  //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                  Navigator.pop(context, 'Saved!');
                 }
               },
               tooltip: 'Save',
