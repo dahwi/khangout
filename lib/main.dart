@@ -153,6 +153,8 @@ class FilloutFormState extends State<FilloutForm> {
 
   @override
   Widget build(BuildContext context) {
+    var devWidth = MediaQuery.of(context).size.width;
+    var devHeight = MediaQuery.of(context).size.height;
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
@@ -176,20 +178,25 @@ class FilloutFormState extends State<FilloutForm> {
               return !value.contains('@') ? 'Invalid email address' : null;
             },
           ),
-          //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
-          FloatingActionButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, otherwise false.
-                if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
+          Padding(
+            // The multiplied components for top and left should be modified when all 
+            // Textfields are inserted for the 'Create a Hangout' page.
+            padding: EdgeInsets.only(top: devHeight*0.55, left: devWidth*0.8),
+            child: FloatingActionButton(
+                onPressed: () {
+                  // Validate returns true if the form is valid, otherwise false.
+                  if (_formKey.currentState.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
 
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
-                }
-              },
-              tooltip: 'Save',
-              child: Icon(Icons.save))
+                    Scaffold.of(context)
+                        .showSnackBar(SnackBar(content: Text('Processing Data')));
+                  }
+                },
+                tooltip: 'Save',
+                child: Icon(Icons.save)
+            ),
+          ),
         ],
       ),
     );
