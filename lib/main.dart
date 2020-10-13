@@ -95,13 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _navigateAndDisplaySelection(context);
-        },
-        tooltip: 'Add',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+                onPressed: () {
+                  _navigateAndDisplaySelection(context);
+                },
+                tooltip: 'Add',
+                child: Icon(Icons.add),
+              )), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -120,7 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // and show the new result.
     Scaffold.of(context)
       ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("$result")));
+      ..showSnackBar(SnackBar(
+        content: Text("$result"),
+        duration: Duration(seconds: 5),
+      ));
   }
 }
 
