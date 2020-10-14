@@ -31,9 +31,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class Hangout {
+  final String title;
+  final String description;
 
+  Hangout(this.title, this.description);
+}
+
+class MyHomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -45,11 +50,15 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  MyHomePage({Key key, this.title}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final List<Hangout> hangouts = [];
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -71,29 +80,11 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          // mainAxisAlignment: MainAxisAlignment.,
-          children: <Widget>[
-            Text('Hangout Information'),
-          ],
-        ),
+      body: ListView.builder(
+        itemCount: hangouts.length,
+        itemBuilder: (context, index) {
+          return ListTile(title: Text(hangouts[index].title));
+        },
       ),
       floatingActionButton: Builder(
           builder: (context) => FloatingActionButton(
@@ -108,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // A method that launches the FillOutScreen and awaits the
   // result from Navigator.pop.
-  _navigateAndDisplaySelection(BuildContext context) async {
+  void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
@@ -125,6 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
         content: Text("$result"),
         duration: Duration(seconds: 5),
       ));
+
+    setState(() {
+      if (result != null) {
+        hangouts.add(new Hangout('test', '$result'));
+      }
+    });
   }
 }
 
