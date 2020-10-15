@@ -244,19 +244,26 @@ class FilloutFormState extends State<FilloutForm> {
             },
           ),
           //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
-          FloatingActionButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, otherwise false.
-                if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  // Validate returns true if the form is valid, otherwise false.
+                  if (_formKey.currentState.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
 
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
-                }
-              },
-              tooltip: 'Save',
-              child: Icon(Icons.save))
+                    Scaffold.of(context)
+                        .showSnackBar(SnackBar(content: Text('Processing Data')));
+                  }
+                },
+                tooltip: 'Save',
+                child: Icon(Icons.save)
+              ),
+            ),
+          ),
         ],
       ),
     );
