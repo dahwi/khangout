@@ -114,12 +114,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ..removeCurrentSnackBar()
       ..showSnackBar(SnackBar(
         content: Text("$result"),
-        duration: Duration(seconds: 5),
+        duration: Duration(seconds: 3),
       ));
 
     setState(() {
       if (result != null) {
-        hangouts.add(new Hangout('test', '$result'));
+        var i = hangouts.length;
+        hangouts.add(new Hangout('test $i', '$result'));
       }
     });
   }
