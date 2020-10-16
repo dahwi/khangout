@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
@@ -136,7 +137,7 @@ class _FillOutPageState extends State<FillOutPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Fillout Page"),
+        title: new Text("Create a Meeting"),
       ),
       body: FilloutForm(),
     );
@@ -160,6 +161,39 @@ class FilloutFormState extends State<FilloutForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  DateTime _date;
+  TimeOfDay _time;
+
+  Future<DateTime> _selectDate(BuildContext context) async {
+    DateTime _datePicker = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(new Duration(days: 365)));
+
+    if (_datePicker != null && _datePicker != _date) {
+      setState(() {
+        _date = _datePicker;
+        print(_date.toString());
+        print(_time.toString());
+      });
+    }
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) async {
+    TimeOfDay _timePicker = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        initialEntryMode: TimePickerEntryMode.input);
+
+    if (_timePicker != null && _timePicker != _time) {
+      setState(() {
+        _time = _timePicker;
+        print(_date.toString());
+        print(_time.toString());
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,20 +204,76 @@ class FilloutFormState extends State<FilloutForm> {
         children: <Widget>[
           TextFormField(
             decoration: const InputDecoration(
-                icon: Icon(Icons.person),
-                hintText: 'Enter your name',
-                labelText: 'Name'),
+                icon: Icon(Icons.title),
+                hintText: 'Add Title',
+                labelText: 'Title'),
             validator: (String value) {
-              return value.isEmpty ? 'Please enter some text' : null;
+              return value.isEmpty ? 'Please enter the titile' : null;
+            },
+          ),
+          TextFormField(
+            readOnly: true,
+            onTap: () {
+              _selectDate(context);
+            },
+            decoration: InputDecoration(
+                icon: Icon(Icons.calendar_today),
+                labelText: 'Date',
+                helperText: (_date == null
+                    ? 'Select Date'
+                    : DateFormat('yyyy-MM-dd').format(_date))),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the date' : null;
+            },
+          ),
+          TextFormField(
+            readOnly: true,
+            onTap: () {
+              _selectTime(context);
+            },
+            decoration: InputDecoration(
+                icon: Icon(Icons.timelapse),
+                labelText: 'Time',
+                helperText:
+                    (_time == null ? 'Select Time' : _time.format(context))),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the time' : null;
             },
           ),
           TextFormField(
             decoration: const InputDecoration(
-                icon: Icon(Icons.email),
-                hintText: 'Enter your email',
-                labelText: 'Email'),
+                icon: Icon(Icons.event_seat),
+                hintText: 'Add Event Type',
+                labelText: 'Type'),
             validator: (String value) {
-              return !value.contains('@') ? 'Invalid email address' : null;
+              return value.isEmpty ? 'Please enter the event type' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.location_pin),
+                hintText: 'Add Location',
+                labelText: 'Location'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the location' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.contact_phone),
+                hintText: 'Add contact info',
+                labelText: 'Contact Info'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter contact info' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.description),
+                hintText: 'Add Description',
+                labelText: 'Description'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the description' : null;
             },
           ),
           //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
