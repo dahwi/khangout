@@ -164,8 +164,6 @@ class FilloutFormState extends State<FilloutForm> {
     if (_datePicker != null && _datePicker != _date) {
       setState(() {
         _date = _datePicker;
-        print(_date.toString());
-        print(_time.toString());
       });
     }
   }
@@ -179,8 +177,6 @@ class FilloutFormState extends State<FilloutForm> {
     if (_timePicker != null && _timePicker != _time) {
       setState(() {
         _time = _timePicker;
-        print(_date.toString());
-        print(_time.toString());
       });
     }
   }
@@ -209,7 +205,7 @@ class FilloutFormState extends State<FilloutForm> {
             decoration: InputDecoration(
                 icon: Icon(Icons.calendar_today),
                 labelText: 'Date',
-                helperText: (_date == null
+                hintText: (_date == null
                     ? 'Select Date'
                     : DateFormat('yyyy-MM-dd').format(_date))),
             validator: (String value) {
@@ -266,6 +262,14 @@ class FilloutFormState extends State<FilloutForm> {
               return value.isEmpty ? 'Please enter the description' : null;
             },
           ),
+          // TextFormField(
+          //   decoration: const InputDecoration(
+          //     icon: const Icon(Icons.calendar_today),
+          //     hintText: 'Enter your date of birth',
+          //     labelText: 'Dob',
+          //   ),
+          //   keyboardType: TextInputType.datetime,
+          // ),
           //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
           FloatingActionButton(
               onPressed: () {
