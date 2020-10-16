@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
@@ -150,6 +151,39 @@ class FilloutFormState extends State<FilloutForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  DateTime _date;
+  TimeOfDay _time;
+
+  Future<DateTime> _selectDate(BuildContext context) async {
+    DateTime _datePicker = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(new Duration(days: 365)));
+
+    if (_datePicker != null && _datePicker != _date) {
+      setState(() {
+        _date = _datePicker;
+        print(_date.toString());
+        print(_time.toString());
+      });
+    }
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) async {
+    TimeOfDay _timePicker = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        initialEntryMode: TimePickerEntryMode.input);
+
+    if (_timePicker != null && _timePicker != _time) {
+      setState(() {
+        _time = _timePicker;
+        print(_date.toString());
+        print(_time.toString());
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,28 +202,30 @@ class FilloutFormState extends State<FilloutForm> {
             },
           ),
           TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.description),
-                hintText: 'Add Description',
-                labelText: 'Description'),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter the description' : null;
+            readOnly: true,
+            onTap: () {
+              _selectDate(context);
             },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.date_range),
-                hintText: 'Add Date',
-                labelText: 'Date'),
+            decoration: InputDecoration(
+                icon: Icon(Icons.calendar_today),
+                labelText: 'Date',
+                helperText: (_date == null
+                    ? 'Select Date'
+                    : DateFormat('yyyy-MM-dd').format(_date))),
             validator: (String value) {
               return value.isEmpty ? 'Please enter the date' : null;
             },
           ),
           TextFormField(
-            decoration: const InputDecoration(
+            readOnly: true,
+            onTap: () {
+              _selectTime(context);
+            },
+            decoration: InputDecoration(
                 icon: Icon(Icons.timelapse),
-                hintText: 'Add Time',
-                labelText: 'Time'),
+                labelText: 'Time',
+                helperText:
+                    (_time == null ? 'Select Time' : _time.format(context))),
             validator: (String value) {
               return value.isEmpty ? 'Please enter the time' : null;
             },
@@ -214,33 +250,20 @@ class FilloutFormState extends State<FilloutForm> {
           ),
           TextFormField(
             decoration: const InputDecoration(
-                icon: Icon(Icons.people),
-                hintText: 'Add Participants',
-                labelText: 'Participants'),
-            validator: (String value) {
-              return value.isEmpty
-                  ? 'Please name participants in the meeting'
-                  : null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.format_list_numbered),
-                hintText: 'Add max number of participants',
-                labelText: 'Max Number of Participants'),
-            validator: (String value) {
-              return value.isEmpty
-                  ? 'Please enter the max number of participants'
-                  : null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
                 icon: Icon(Icons.contact_phone),
                 hintText: 'Add contact info',
                 labelText: 'Contact Info'),
             validator: (String value) {
               return value.isEmpty ? 'Please enter contact info' : null;
+            },
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+                icon: Icon(Icons.description),
+                hintText: 'Add Description',
+                labelText: 'Description'),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter the description' : null;
             },
           ),
           //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
