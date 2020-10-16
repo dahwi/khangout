@@ -152,9 +152,10 @@ class FilloutFormState extends State<FilloutForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
   DateTime _date;
-  TimeOfDay _time;
+  TimeOfDay _startTime;
+  TimeOfDay _endTime;
 
-  Future<DateTime> _selectDate(BuildContext context) async {
+  Future<Null> _selectDate(BuildContext context) async {
     DateTime _datePicker = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -168,16 +169,25 @@ class FilloutFormState extends State<FilloutForm> {
     }
   }
 
-  Future<TimeOfDay> _selectTime(BuildContext context) async {
+  /* int timeline: 0 is startTime and 1 is endTime */
+  Future<Null> _selectTime(BuildContext context, int timeline) async {
     TimeOfDay _timePicker = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
         initialEntryMode: TimePickerEntryMode.input);
 
-    if (_timePicker != null && _timePicker != _time) {
-      setState(() {
-        _time = _timePicker;
-      });
+    if (_timePicker != null &&
+        _timePicker != _startTime &&
+        _timePicker != _endTime) {
+      if (timeline == 0) {
+        setState(() {
+          _startTime = _timePicker;
+        });
+      } else {
+        setState(() {
+          _endTime = _timePicker;
+        });
+      }
     }
   }
 
@@ -205,7 +215,7 @@ class FilloutFormState extends State<FilloutForm> {
             decoration: InputDecoration(
                 icon: Icon(Icons.calendar_today),
                 labelText: 'Date',
-                hintText: (_date == null
+                helperText: (_date == null
                     ? 'Select Date'
                     : DateFormat('yyyy-MM-dd').format(_date))),
             validator: (String value) {
@@ -215,15 +225,31 @@ class FilloutFormState extends State<FilloutForm> {
           TextFormField(
             readOnly: true,
             onTap: () {
-              _selectTime(context);
+              _selectTime(context, 0);
             },
             decoration: InputDecoration(
                 icon: Icon(Icons.timelapse),
-                labelText: 'Time',
-                helperText:
-                    (_time == null ? 'Select Time' : _time.format(context))),
+                labelText: 'Start Time',
+                helperText: (_startTime == null
+                    ? 'Select Start Time'
+                    : _startTime.format(context))),
             validator: (String value) {
-              return value.isEmpty ? 'Please enter the time' : null;
+              return value.isEmpty ? 'Please enter start time' : null;
+            },
+          ),
+          TextFormField(
+            readOnly: true,
+            onTap: () {
+              _selectTime(context, 1);
+            },
+            decoration: InputDecoration(
+                icon: Icon(Icons.timelapse),
+                labelText: 'End Time',
+                helperText: (_endTime == null
+                    ? 'Select End Time'
+                    : _endTime.format(context))),
+            validator: (String value) {
+              return value.isEmpty ? 'Please enter end time' : null;
             },
           ),
           TextFormField(
