@@ -147,6 +147,10 @@ class FilloutForm extends StatefulWidget {
   }
 }
 
+TextEditingController dateCtl = TextEditingController();
+TextEditingController timeCtl0 = TextEditingController(); //start time
+TextEditingController timeCtl1 = TextEditingController(); //end time
+
 // Define a corresponding State class.
 // This class holds data related to the form.
 class FilloutFormState extends State<FilloutForm> {
@@ -156,38 +160,33 @@ class FilloutFormState extends State<FilloutForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  DateTime _date;
-  TimeOfDay _time;
 
-  Future<DateTime> _selectDate(BuildContext context) async {
+  Future<Null> _selectDate(BuildContext context) async {
     DateTime _datePicker = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(new Duration(days: 365)));
 
-    if (_datePicker != null && _datePicker != _date) {
-      setState(() {
-        _date = _datePicker;
-      });
+    if (_datePicker != null) {
+      dateCtl.text = DateFormat('yyyy-MM-dd').format(_datePicker);
     }
-
-    return _date;
   }
 
-  Future<TimeOfDay> _selectTime(BuildContext context) async {
+  /* int timeline: 0 is startTime and 1 is endTime */
+  Future<Null> _selectTime(BuildContext context, int timeline) async {
     TimeOfDay _timePicker = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
         initialEntryMode: TimePickerEntryMode.input);
 
-    if (_timePicker != null && _timePicker != _time) {
-      setState(() {
-        _time = _timePicker;
-      });
+    if (_timePicker != null) {
+      if (timeline == 0) {
+        timeCtl0.text = _timePicker.format(context);
+      } else {
+        timeCtl1.text = _timePicker.format(context);
+      }
     }
-
-    return _time;
   }
 
   @override
@@ -198,7 +197,7 @@ class FilloutFormState extends State<FilloutForm> {
         ),
         body: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: <Widget>[
               TextFormField(
                 decoration: const InputDecoration(
@@ -210,33 +209,43 @@ class FilloutFormState extends State<FilloutForm> {
                 },
               ),
               TextFormField(
-                readOnly: true,
-                onTap: () {
-                  _selectDate(context);
-                },
-                decoration: InputDecoration(
+                  readOnly: true,
+                  controller: dateCtl,
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                  decoration: InputDecoration(
                     icon: Icon(Icons.calendar_today),
                     labelText: 'Date',
-                    hintText: (_date == null
-                        ? 'Select Date'
-                        : DateFormat('yyyy-MM-dd').format(_date))),
-                validator: (String value) {
-                  return value.isEmpty ? 'Please enter the date' : null;
-                },
-              ),
+                  ),
+                  validator: (String value) {
+                    return value.isEmpty ? 'Please select date' : null;
+                  }),
+              TextFormField(
+                  readOnly: true,
+                  controller: timeCtl0,
+                  onTap: () {
+                    _selectTime(context, 0);
+                  },
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.timelapse),
+                    labelText: 'Start Time',
+                  ),
+                  validator: (String value) {
+                    return value.isEmpty ? 'Please select start time' : null;
+                  }),
               TextFormField(
                 readOnly: true,
+                controller: timeCtl1,
                 onTap: () {
-                  _selectTime(context);
+                  _selectTime(context, 1);
                 },
                 decoration: InputDecoration(
-                    icon: Icon(Icons.timelapse),
-                    labelText: 'Time',
-                    hintText: (_time == null
-                        ? 'Select Time'
-                        : _time.format(context))),
+                  icon: Icon(Icons.timelapse),
+                  labelText: 'End Time',
+                ),
                 validator: (String value) {
-                  return value.isEmpty ? 'Please enter the time' : null;
+                  return value.isEmpty ? 'Please select end time' : null;
                 },
               ),
               TextFormField(
@@ -267,14 +276,16 @@ class FilloutFormState extends State<FilloutForm> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(
-                    icon: Icon(Icons.description),
-                    hintText: 'Add Description',
-                    labelText: 'Description'),
-                validator: (String value) {
-                  return value.isEmpty ? 'Please enter the description' : null;
-                },
-              )
+                  decoration: const InputDecoration(
+                      icon: Icon(Icons.description),
+                      hintText: 'Add Description',
+                      labelText: 'Description'),
+                  validator: (String value) {
+                    return value.isEmpty
+                        ? 'Please enter the description'
+                        : null;
+                  },
+                  maxLines: null)
             ],
           ),
         ),
