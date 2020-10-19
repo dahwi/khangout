@@ -191,6 +191,10 @@ class FilloutFormState extends State<FilloutForm> {
 
   @override
   Widget build(BuildContext context) {
+    dateCtl.clear();
+    timeCtl0.clear();
+    timeCtl1.clear();
+
     return new Scaffold(
         appBar: new AppBar(
           title: new Text("Create a Meeting"),
