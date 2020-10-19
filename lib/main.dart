@@ -297,11 +297,12 @@ class FilloutFormState extends State<FilloutForm> {
                 // you'd often call a server or save the information in a database.
                 // Scaffold.of(context)
                 //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                dateCtl.clear();
+                timeCtl0.clear();
+                timeCtl1.clear();
+
                 Navigator.pop(context, 'Saved!');
               }
-              dateCtl.clear();
-              timeCtl0.clear();
-              timeCtl1.clear();
             },
             tooltip: 'Save',
             child: Icon(Icons.save)));
