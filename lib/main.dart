@@ -32,9 +32,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class Hangout {
+  final String title;
+  final String description;
 
+  Hangout(this.title, this.description);
+}
+
+class MyHomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -46,11 +51,15 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  MyHomePage({Key key, this.title}) : super(key: key);
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final List<Hangout> hangouts = [];
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -72,41 +81,49 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          // mainAxisAlignment: MainAxisAlignment.,
-          children: <Widget>[
-            Text('Hangout Information'),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            new MaterialPageRoute(builder: (context) => new FillOutPage()),
-          );
+      body: ListView.builder(
+        itemCount: hangouts.length,
+        itemBuilder: (context, index) {
+          return ListTile(title: Text(hangouts[index].title));
         },
-        tooltip: 'Add',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+                onPressed: () {
+                  _navigateAndDisplaySelection(context);
+                },
+                tooltip: 'Add',
+                child: Icon(Icons.add),
+              )), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  // A method that launches the FillOutScreen and awaits the
+  // result from Navigator.pop.
+  void _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the FillOutScreen in the next step.
+      MaterialPageRoute(builder: (context) => FillOutPage()),
+    );
+
+    // After the FillOut Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    Scaffold.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text("$result"),
+        duration: Duration(seconds: 3),
+      ));
+
+    setState(() {
+      if (result != null) {
+        var i = hangouts.length;
+        hangouts.add(new Hangout('test $i', '$result'));
+      }
+    });
   }
 }
 
@@ -118,19 +135,7 @@ class FillOutPage extends StatefulWidget {
 class _FillOutPageState extends State<FillOutPage> {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Create a Meeting"),
-      ),
-      body: FilloutForm(),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.pop(context);
-      //   },
-      //   tooltip: 'Save',
-      //   child: Icon(Icons.save),
-      // ),
-    );
+    return FilloutForm();
   }
 }
 
@@ -142,6 +147,10 @@ class FilloutForm extends StatefulWidget {
   }
 }
 
+TextEditingController dateCtl = TextEditingController();
+TextEditingController timeCtl0 = TextEditingController(); //start time
+TextEditingController timeCtl1 = TextEditingController(); //end time
+
 // Define a corresponding State class.
 // This class holds data related to the form.
 class FilloutFormState extends State<FilloutForm> {
@@ -151,9 +160,6 @@ class FilloutFormState extends State<FilloutForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  DateTime _date;
-  TimeOfDay _startTime;
-  TimeOfDay _endTime;
 
   Future<Null> _selectDate(BuildContext context) async {
     DateTime _datePicker = await showDatePicker(
@@ -162,10 +168,8 @@ class FilloutFormState extends State<FilloutForm> {
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(new Duration(days: 365)));
 
-    if (_datePicker != null && _datePicker != _date) {
-      setState(() {
-        _date = _datePicker;
-      });
+    if (_datePicker != null) {
+      dateCtl.text = DateFormat('yyyy-MM-dd').format(_datePicker);
     }
   }
 
@@ -176,142 +180,127 @@ class FilloutFormState extends State<FilloutForm> {
         initialTime: TimeOfDay.now(),
         initialEntryMode: TimePickerEntryMode.input);
 
-    if (_timePicker != null &&
-        _timePicker != _startTime &&
-        _timePicker != _endTime) {
+    if (_timePicker != null) {
       if (timeline == 0) {
-        setState(() {
-          _startTime = _timePicker;
-        });
+        timeCtl0.text = _timePicker.format(context);
       } else {
-        setState(() {
-          _endTime = _timePicker;
-        });
+        timeCtl1.text = _timePicker.format(context);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.title),
-                hintText: 'Add Title',
-                labelText: 'Title'),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter the titile' : null;
-            },
+    return new Scaffold(
+        appBar: new AppBar(
+          title: new Text("Create a Meeting"),
+        ),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              TextFormField(
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.title),
+                    hintText: 'Add Title',
+                    labelText: 'Title'),
+                validator: (String value) {
+                  return value.isEmpty ? 'Please enter the titile' : null;
+                },
+              ),
+              TextFormField(
+                  readOnly: true,
+                  controller: dateCtl,
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.calendar_today),
+                    labelText: 'Date',
+                  ),
+                  validator: (String value) {
+                    return value.isEmpty ? 'Please select date' : null;
+                  }),
+              TextFormField(
+                  readOnly: true,
+                  controller: timeCtl0,
+                  onTap: () {
+                    _selectTime(context, 0);
+                  },
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.timelapse),
+                    labelText: 'Start Time',
+                  ),
+                  validator: (String value) {
+                    return value.isEmpty ? 'Please select start time' : null;
+                  }),
+              TextFormField(
+                readOnly: true,
+                controller: timeCtl1,
+                onTap: () {
+                  _selectTime(context, 1);
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.timelapse),
+                  labelText: 'End Time',
+                ),
+                validator: (String value) {
+                  return value.isEmpty ? 'Please select end time' : null;
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.event_seat),
+                    hintText: 'Add Event Type',
+                    labelText: 'Type'),
+                validator: (String value) {
+                  return value.isEmpty ? 'Please enter the event type' : null;
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.location_pin),
+                    hintText: 'Add Location',
+                    labelText: 'Location'),
+                validator: (String value) {
+                  return value.isEmpty ? 'Please enter the location' : null;
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.contact_phone),
+                    hintText: 'Add contact info',
+                    labelText: 'Contact Info'),
+                validator: (String value) {
+                  return value.isEmpty ? 'Please enter contact info' : null;
+                },
+              ),
+              TextFormField(
+                  decoration: const InputDecoration(
+                      icon: Icon(Icons.description),
+                      hintText: 'Add Description',
+                      labelText: 'Description'),
+                  validator: (String value) {
+                    return value.isEmpty
+                        ? 'Please enter the description'
+                        : null;
+                  },
+                  maxLines: null)
+            ],
           ),
-          TextFormField(
-            readOnly: true,
-            onTap: () {
-              _selectDate(context);
+        ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // Validate returns true if the form is valid, otherwise false.
+              if (_formKey.currentState.validate()) {
+                // If the form is valid, display a snackbar. In the real world,
+                // you'd often call a server or save the information in a database.
+                // Scaffold.of(context)
+                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                Navigator.pop(context, 'Saved!');
+              }
             },
-            decoration: InputDecoration(
-                icon: Icon(Icons.calendar_today),
-                labelText: 'Date',
-                helperText: (_date == null
-                    ? 'Select Date'
-                    : DateFormat('yyyy-MM-dd').format(_date))),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter the date' : null;
-            },
-          ),
-          TextFormField(
-            readOnly: true,
-            onTap: () {
-              _selectTime(context, 0);
-            },
-            decoration: InputDecoration(
-                icon: Icon(Icons.timelapse),
-                labelText: 'Start Time',
-                helperText: (_startTime == null
-                    ? 'Select Start Time'
-                    : _startTime.format(context))),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter start time' : null;
-            },
-          ),
-          TextFormField(
-            readOnly: true,
-            onTap: () {
-              _selectTime(context, 1);
-            },
-            decoration: InputDecoration(
-                icon: Icon(Icons.timelapse),
-                labelText: 'End Time',
-                helperText: (_endTime == null
-                    ? 'Select End Time'
-                    : _endTime.format(context))),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter end time' : null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.event_seat),
-                hintText: 'Add Event Type',
-                labelText: 'Type'),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter the event type' : null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.location_pin),
-                hintText: 'Add Location',
-                labelText: 'Location'),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter the location' : null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.contact_phone),
-                hintText: 'Add contact info',
-                labelText: 'Contact Info'),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter contact info' : null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                icon: Icon(Icons.description),
-                hintText: 'Add Description',
-                labelText: 'Description'),
-            validator: (String value) {
-              return value.isEmpty ? 'Please enter the description' : null;
-            },
-          ),
-          // TextFormField(
-          //   decoration: const InputDecoration(
-          //     icon: const Icon(Icons.calendar_today),
-          //     hintText: 'Enter your date of birth',
-          //     labelText: 'Dob',
-          //   ),
-          //   keyboardType: TextInputType.datetime,
-          // ),
-          //ADD Padding https://api.flutter.dev/flutter/painting/EdgeInsets-class.html
-          FloatingActionButton(
-              onPressed: () {
-                // Validate returns true if the form is valid, otherwise false.
-                if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
-                }
-              },
-              tooltip: 'Save',
-              child: Icon(Icons.save))
-        ],
-      ),
-    );
+            tooltip: 'Save',
+            child: Icon(Icons.save)));
   }
 }
