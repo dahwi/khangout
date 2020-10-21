@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
-void main() {
+import './src/models/_hangout.dart';
+import './src/db/main.dart';
+
+Future<void> main() async {
   runApp(MyApp());
+  var db = await connectToDB();
+  final info = Hangout(
+      id: 0,
+      title: 'test',
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  final info1 = Hangout(
+      id: 1,
+      title: 'test1',
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  await insertHangout(db, info);
+  await insertHangout(db, info1);
+
+  print(await showHangouts(db));
 }
 
 class MyApp extends StatelessWidget {
@@ -32,11 +49,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Hangout {
+class HangoutInfo {
   final String title;
   final String description;
 
-  Hangout(this.title, this.description);
+  HangoutInfo(this.title, this.description);
 }
 
 class MyHomePage extends StatefulWidget {
@@ -58,7 +75,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Hangout> hangouts = [];
+  final List<HangoutInfo> hangouts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // A method that launches the FillOutScreen and awaits the
   // result from Navigator.pop.
-  void _navigateAndDisplaySelection(BuildContext context) async {
+  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
@@ -121,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (result != null) {
         var i = hangouts.length;
-        hangouts.add(new Hangout('test $i', '$result'));
+        hangouts.add(new HangoutInfo('test $i', '$result'));
       }
     });
   }
@@ -280,11 +297,11 @@ class FilloutFormState extends State<FilloutForm> {
                       icon: Icon(Icons.description),
                       hintText: 'Add Description',
                       labelText: 'Description'),
-                  validator: (String value) {
-                    return value.isEmpty
-                        ? 'Please enter the description'
-                        : null;
-                  },
+                  // validator: (String value) {
+                  //   return value.isEmpty
+                  //       ? 'Please enter the description'
+                  //       : null;
+                  // },
                   maxLines: null)
             ],
           ),
