@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -150,6 +151,9 @@ class FilloutForm extends StatefulWidget {
 TextEditingController dateCtl = TextEditingController();
 TextEditingController timeCtl0 = TextEditingController(); //start time
 TextEditingController timeCtl1 = TextEditingController(); //end time
+TextEditingController onlineStatus = TextEditingController(); // online/offline status
+TextEditingController category = TextEditingController(); // category 'list'
+
 
 // Define a corresponding State class.
 // This class holds data related to the form.
@@ -187,6 +191,119 @@ class FilloutFormState extends State<FilloutForm> {
         timeCtl1.text = _timePicker.format(context);
       }
     }
+  }
+
+  void _showCategoryDialog(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (context){
+        return StatefulBuilder(builder: (context, setState){
+          return AlertDialog(
+            title: Text('Select Category(s)'),
+            content: Container(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: CheckboxGroup(
+                  labels: <String>[
+                    "Exercise",
+                    "Frisbee",
+                    "Food",
+                    "Games",
+                    "Movies",
+                    "Music",
+                    "Rock Climbing",
+                    "Sports",
+                    "Studying",
+                    "Performance",
+                    "Other",
+                  ],
+                  onSelected: (List selected) => setState((){
+                    category.text = selected.toString();
+                  }),
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle( fontSize: 18),
+                ),
+                onPressed: () {
+                  setState(() {
+                    category.clear();
+                  });
+                  Navigator.of(context).pop();
+                }
+              ),
+              FlatButton(
+                child: Text(
+                  'Ok',
+                  style: TextStyle( fontSize: 18),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+      }
+    );
+  }
+
+  void _showOnlineStatusDialog(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (context){
+        return StatefulBuilder(builder: (context, setState){
+          return AlertDialog(
+            title: Text('Select Status Type'),
+            content: Container(
+              height: 100,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: CheckboxGroup(
+                  labels: <String>[
+                    "Online",
+                    "Offline",
+                  ],
+                  onSelected: (List selected) => setState((){
+                    if (selected.length > 1) {
+                      selected.removeAt(0);
+                    }
+                    onlineStatus.text = selected[0].toString();
+                  }),
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle( fontSize: 18),
+                ),
+                onPressed: () {
+                  setState(() {
+                    onlineStatus.clear();
+                  });
+                  Navigator.of(context).pop();
+                }
+              ),
+              FlatButton(
+                child: Text(
+                  'Ok',
+                  style: TextStyle( fontSize: 18),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+      }
+    );
   }
 
   @override
@@ -249,12 +366,31 @@ class FilloutFormState extends State<FilloutForm> {
                 },
               ),
               TextFormField(
+                readOnly: true,
+                controller: onlineStatus,
+                onTap: () {
+                  _showOnlineStatusDialog(context);
+                },
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.event_seat),
-                    hintText: 'Add Event Type',
-                    labelText: 'Type'),
+                    icon: Icon(Icons.laptop_mac),
+                    hintText: 'Online or Offline',
+                    labelText: 'Status Type'),
                 validator: (String value) {
-                  return value.isEmpty ? 'Please enter the event type' : null;
+                  return value.isEmpty ? 'Please select Status Type' : null;
+                },
+              ),
+              TextFormField(
+                readOnly: true,
+                controller: category,
+                onTap: () {
+                  _showCategoryDialog(context);
+                },
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.playlist_add_check),
+                    hintText: 'Games, Sports...',
+                    labelText: 'Category Type'),
+                validator: (String value) {
+                  return value.isEmpty ? 'Please Select/Input Category Type' : null;
                 },
               ),
               TextFormField(
@@ -302,6 +438,8 @@ class FilloutFormState extends State<FilloutForm> {
               dateCtl.clear();
               timeCtl0.clear();
               timeCtl1.clear();
+              onlineStatus.clear();
+              category.clear();
             },
             tooltip: 'Save',
             child: Icon(Icons.save)));
