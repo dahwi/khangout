@@ -438,7 +438,7 @@ class FilloutFormState extends State<FilloutForm> {
                 timeCtl1.clear();
                 onlineStatus.clear();
                 category.clear();
-
+                
                 Navigator.pop(context, 'Saved!');
               }
             },
