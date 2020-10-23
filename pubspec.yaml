@@ -24,8 +24,14 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.16.1
+<<<<<<< HEAD
   sqflite:
   path:
+=======
+  grouped_buttons: ^1.0.4
+
+
+>>>>>>> 1915a4c1082d9389c4bb8799cc24c155ab7fe1a5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
