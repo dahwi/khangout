@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import '../models/_hangout.dart';
 
 Future<Database> connectToDB() async {
+  print(join(await getDatabasesPath(), 'hangout_database.db'));
 // Avoid errors caused by flutter upgrade.
 // Importing 'package:flutter/widgets.dart' is required.
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ Future<Database> connectToDB() async {
     // `path` package is best practice to ensure the path is correctly
     // constructed for each platform.
     join(await getDatabasesPath(), 'hangout_database.db'),
+
     // When the database is first created, create a table to store Hangouts.
     onCreate: (db, version) {
       // Run the CREATE TABLE statement on the database.
