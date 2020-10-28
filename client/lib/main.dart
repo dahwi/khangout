@@ -3,24 +3,8 @@ import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 
-import './src/models/_hangout.dart';
-import './src/db/main.dart';
-
-Future<void> main() async {
+main() {
   runApp(MyApp());
-  var db = await connectToDB();
-  final info = Hangout(
-      id: 0,
-      title: 'test',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-  final info1 = Hangout(
-      id: 1,
-      title: 'test1',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-  await insertHangout(db, info);
-  await insertHangout(db, info1);
-
-  print(await showHangouts(db));
 }
 
 class MyApp extends StatelessWidget {
