@@ -12,15 +12,29 @@ Future<void> main() async {
   final info = Hangout(
       id: 0,
       title: 'test',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      startTime: TimeOfDay.now().toString(),
+      endTime: TimeOfDay.now().toString(),
+      type: 'online',
+      category: 'movies',
+      location: 'MS teams',
+      contact: '123-456-7890',
+      description: 'test');
   final info1 = Hangout(
       id: 1,
       title: 'test1',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      startTime: TimeOfDay.now().toString(),
+      endTime: TimeOfDay.now().toString(),
+      type: 'online',
+      category: 'movies',
+      location: 'MS teams',
+      contact: '123-456-7890',
+      description: 'test');
+
+  // test info
   await insertHangout(db, info);
   await insertHangout(db, info1);
-
-  print(await showHangouts(db));
 }
 
 class MyApp extends StatelessWidget {
@@ -50,12 +64,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HangoutInfo {
-  final String title;
-  final String description;
+// class HangoutInfo {
+//   final String title;
+//   final String description;
 
-  HangoutInfo(this.title, this.description);
-}
+//   HangoutInfo(this.title, this.description);
+// }
 
 class MyHomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -76,7 +90,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<HangoutInfo> hangouts = [];
+  List<Hangout> hangouts = [];
+  List<Hangout> updatedHangouts = [];
+
+  Future<List<Hangout>> init() async {
+    var db = await connectToDB();
+    hangouts = await showHangouts(db);
+    return hangouts;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +120,46 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: hangouts.length,
-        itemBuilder: (context, index) {
-          return Card(
-              child: ListTile(
-                  title: Text(hangouts[index].title),
-                  subtitle: Text(
-                      'A sufficiently long subtitle warrants three lines.'),
-                  trailing: Icon(Icons.more_vert)));
+      body: FutureBuilder<List<Hangout>>(
+        future: init(),
+        builder: (BuildContext context, AsyncSnapshot<List<Hangout>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: hangouts.length,
+              itemBuilder: (context, index) {
+                return Center(
+                  child: Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                            leading:
+                                Icon(Icons.chevron_right_rounded, size: 40),
+                            title: Text(hangouts[index].title ?? ""),
+                            subtitle: Text(hangouts[index].date ?? "")),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            TextButton(
+                              child: const Text('VIEW MORE'),
+                              onPressed: () {/* ... */},
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton(
+                              child: const Text('JOIN'),
+                              onPressed: () {/* ... */},
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          } else
+            return Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton: Builder(
@@ -134,18 +186,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // After the FillOut Screen returns a result, hide any previous snackbars
     // and show the new result.
-    Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text("$result"),
-        duration: Duration(seconds: 3),
-      ));
+    if (result != null) {
+      Scaffold.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text("saved!"),
+          duration: Duration(seconds: 3),
+        ));
+    }
+
+    var db = await connectToDB();
+
+    await insertHangout(
+        db,
+        new Hangout(
+            title: result[0],
+            date: result[1],
+            startTime: result[2],
+            endTime: result[3],
+            type: result[4],
+            category: result[5],
+            location: result[6],
+            contact: result[7],
+            description: result[8]));
+
+    updatedHangouts = await showHangouts(db);
 
     setState(() {
-      if (result != null) {
-        var i = hangouts.length;
-        hangouts.add(new HangoutInfo('test $i', '$result'));
-      }
+      hangouts = updatedHangouts;
     });
   }
 }
@@ -170,12 +238,16 @@ class FilloutForm extends StatefulWidget {
   }
 }
 
+TextEditingController titleCtl = TextEditingController();
 TextEditingController dateCtl = TextEditingController();
 TextEditingController timeCtl0 = TextEditingController(); //start time
 TextEditingController timeCtl1 = TextEditingController(); //end time
 TextEditingController onlineStatus =
     TextEditingController(); // online/offline status
 TextEditingController category = TextEditingController(); // category 'list'
+TextEditingController locationCtl = TextEditingController();
+TextEditingController contactCtl = TextEditingController();
+TextEditingController descCtl = TextEditingController();
 
 // Define a corresponding State class.
 // This class holds data related to the form.
@@ -337,6 +409,7 @@ class FilloutFormState extends State<FilloutForm> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                controller: titleCtl,
                 decoration: const InputDecoration(
                     icon: Icon(Icons.title),
                     hintText: 'Add Title',
@@ -416,6 +489,7 @@ class FilloutFormState extends State<FilloutForm> {
                 },
               ),
               TextFormField(
+                controller: locationCtl,
                 decoration: const InputDecoration(
                     icon: Icon(Icons.location_pin),
                     hintText: 'Add Location',
@@ -425,6 +499,7 @@ class FilloutFormState extends State<FilloutForm> {
                 },
               ),
               TextFormField(
+                controller: contactCtl,
                 decoration: const InputDecoration(
                     icon: Icon(Icons.contact_phone),
                     hintText: 'Add contact info',
@@ -434,6 +509,7 @@ class FilloutFormState extends State<FilloutForm> {
                 },
               ),
               TextFormField(
+                  controller: descCtl,
                   decoration: const InputDecoration(
                       icon: Icon(Icons.description),
                       hintText: 'Add Description',
@@ -455,16 +531,38 @@ class FilloutFormState extends State<FilloutForm> {
                 // you'd often call a server or save the information in a database.
                 // Scaffold.of(context)
                 //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+
+                // save hangout info to database
+                submit();
+
+                // Navigator.pop(context, 'Saved!');
+
                 dateCtl.clear();
                 timeCtl0.clear();
                 timeCtl1.clear();
                 onlineStatus.clear();
                 category.clear();
-
-                Navigator.pop(context, 'Saved!');
               }
             },
             tooltip: 'Save',
             child: Icon(Icons.save)));
+  }
+
+  void submit() {
+    var form = [];
+
+    form.add(titleCtl.text);
+    form.add(dateCtl.text);
+    form.add(timeCtl0.text);
+    form.add(timeCtl1.text);
+    form.add(onlineStatus.text);
+    form.add(category.text);
+    form.add(locationCtl.text);
+    form.add(contactCtl.text);
+    form.add(descCtl.text);
+
+    print(form.toString());
+
+    Navigator.pop(context, form);
   }
 }

@@ -5,6 +5,7 @@ class Hangout {
   final String startTime;
   final String endTime;
   final String type;
+  final String category;
   final String location;
   final String contact;
   final String description;
@@ -16,6 +17,7 @@ class Hangout {
       this.startTime,
       this.endTime,
       this.type,
+      this.category,
       this.location,
       this.contact,
       this.description});
@@ -30,6 +32,7 @@ class Hangout {
       'startTime': startTime,
       'endTime': endTime,
       'type': type,
+      'category': category,
       'location': location,
       'contact': contact,
       'description': description
@@ -38,6 +41,6 @@ class Hangout {
 
   @override
   String toString() {
-    return 'Hangout{id: $id, title: $title, date: $date, startTime: $startTime, endTime: $endTime, type: $type, location: $location, contact: $contact, description: $description}';
+    return 'Hangout{id: $id, title: $title, date: $date, startTime: $startTime, endTime: $endTime, type: $type, category: $category, location: $location, contact: $contact, description: $description}';
   }
 }
