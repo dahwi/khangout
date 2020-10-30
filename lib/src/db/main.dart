@@ -21,7 +21,7 @@ Future<Database> connectToDB() async {
     onCreate: (db, version) {
       // Run the CREATE TABLE statement on the database.
       return db.execute(
-        "CREATE TABLE hangouts(id INTEGER PRIMARY KEY, title TEXT, date TEXT, startTime TEXT, endTime TEXT, type TEXT, location TEXT, contaxt TEXT, description TEXT)",
+        "CREATE TABLE hangouts(id INTEGER PRIMARY KEY, title TEXT, date TEXT, startTime TEXT, endTime TEXT, type TEXT, location TEXT, contact TEXT, description TEXT)",
       );
     },
     // Set the version. This executes the onCreate function and provides a
