@@ -12,11 +12,23 @@ Future<void> main() async {
   final info = Hangout(
       id: 0,
       title: 'test',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      startTime: TimeOfDay.now().toString(),
+      endTime: TimeOfDay.now().toString(),
+      type: 'online',
+      location: 'MS teams',
+      contact: '123-456-7890',
+      description: 'test');
   final info1 = Hangout(
       id: 1,
       title: 'test1',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      startTime: TimeOfDay.now().toString(),
+      endTime: TimeOfDay.now().toString(),
+      type: 'online',
+      location: 'MS teams',
+      contact: '123-456-7890',
+      description: 'test1');
   await insertHangout(db, info);
   await insertHangout(db, info1);
 
