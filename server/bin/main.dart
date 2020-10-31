@@ -1,7 +1,7 @@
 import 'package:server/server.dart';
 
 Future main() async {
-  final app = Application<AppChannel>()
+  final app = Application<ServerChannel>()
     ..options.configurationFilePath = "config.yaml"
     ..options.port = 8888;
 

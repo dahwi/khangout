@@ -3,9 +3,12 @@ import 'server.dart';
 
 /// This type initializes an application.
 ///
-/// Override methods in this class to set up routes and initialize services like
-/// database connections. See http://aqueduct.io/docs/http/channel/.
-class AppChannel extends ApplicationChannel {
+/// Application needs to know two things to execute database queries:
+/// 1. What is the data model
+/// 2. What databae to connect to
+class ServerChannel extends ApplicationChannel {
+  ManagedContext context;
+
   /// Initialize services in this method.
   ///
   /// Implement this method to initialize services, read values from [options]
@@ -16,6 +19,15 @@ class AppChannel extends ApplicationChannel {
   Future prepare() async {
     logger.onRecord.listen(
         (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
+
+    // find all of our ManagedObject<T> subclasses and compile them into a data model
+    final dataModel = ManagedDataModel.fromCurrentMirrorSystem();
+    // PostgresSQLPersistentStore takes database connection information that will be used to
+    // connect and send queries to a database
+    final persistentStore = PostgreSQLPersistentStore.fromConnectionInfo(
+        "hangouts_user", "password", "localhost", 5432, "hangouts");
+
+    context = ManagedContext(dataModel, persistentStore);
   }
 
   /// Construct the request channel.
@@ -34,7 +46,7 @@ class AppChannel extends ApplicationChannel {
       return Response.ok({"key": "value"});
     });
 
-    router.route('/hangouts/[:id]').link(() => HangoutController());
+    router.route('/hangouts/[:id]').link(() => HangoutController(context));
     return router;
   }
 }
