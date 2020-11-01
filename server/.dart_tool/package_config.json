@@ -57,9 +57,9 @@
     },
     {
       "name": "collection",
-      "rootUri": "file:///Users/dahwi/.pub-cache/hosted/pub.dartlang.org/collection-1.14.13",
+      "rootUri": "file:///Users/dahwi/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0-nullsafety.3",
       "packageUri": "lib/",
-      "languageVersion": "2.3"
+      "languageVersion": "2.10"
     },
     {
       "name": "convert",
@@ -147,9 +147,9 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/dahwi/.pub-cache/hosted/pub.dartlang.org/meta-1.2.3",
+      "rootUri": "file:///Users/dahwi/.pub-cache/hosted/pub.dartlang.org/meta-1.3.0-nullsafety.3",
       "packageUri": "lib/",
-      "languageVersion": "1.12"
+      "languageVersion": "2.10"
     },
     {
       "name": "mime",
@@ -333,9 +333,9 @@
     },
     {
       "name": "typed_data",
-      "rootUri": "file:///Users/dahwi/.pub-cache/hosted/pub.dartlang.org/typed_data-1.2.0",
+      "rootUri": "file:///Users/dahwi/.pub-cache/hosted/pub.dartlang.org/typed_data-1.3.0-nullsafety.3",
       "packageUri": "lib/",
-      "languageVersion": "2.4"
+      "languageVersion": "2.10"
     },
     {
       "name": "vm_service_client",
@@ -368,7 +368,7 @@
       "languageVersion": "2.0"
     }
   ],
-  "generated": "2020-11-01T02:36:11.030989Z",
+  "generated": "2020-11-01T23:53:38.585496Z",
   "generator": "pub",
   "generatorVersion": "2.11.0-173.0.dev"
 }
