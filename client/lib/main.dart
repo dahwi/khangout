@@ -2,25 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-import './src/models/_hangout.dart';
-import './src/db/main.dart';
-
-Future<void> main() async {
+main() {
   runApp(MyApp());
-  var db = await connectToDB();
-  final info = Hangout(
-      id: 0,
-      title: 'test',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-  final info1 = Hangout(
-      id: 1,
-      title: 'test1',
-      date: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-  await insertHangout(db, info);
-  await insertHangout(db, info1);
-
-  print(await showHangouts(db));
 }
 
 class MyApp extends StatelessWidget {
@@ -50,11 +36,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HangoutInfo {
+class Hangout {
   final String title;
-  final String description;
+  final String date;
 
-  HangoutInfo(this.title, this.description);
+  Hangout(this.title, this.date);
+
+  @override
+  String toString() {
+    return 'Hangout{title: $title, date: $date}';
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -76,10 +67,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<HangoutInfo> hangouts = [];
+  final List<Hangout> hangouts = [];
 
   @override
   Widget build(BuildContext context) {
+    const _hangoutsUrl = 'http://localhost:8888/hangouts';
+
+    List<Hangout> createHangoutList(List data) {
+      List<Hangout> list = new List();
+
+      for (int i = 0; i < data.length; i++) {
+        String title = data[i]["title"];
+        String startTime = data[i]["start_time"];
+        String date = startTime.substring(0, 10);
+        Hangout hangout = new Hangout(title, date);
+        list.add(hangout);
+      }
+
+      return list;
+    }
+
+    Future<List<Hangout>> getAllHangouts() async {
+      final response = await http.get(_hangoutsUrl);
+      print(response.body);
+      List responseJson = json.decode(response.body.toString());
+      List<Hangout> hangoutList = createHangoutList(responseJson);
+      print(hangoutList);
+      return hangoutList;
+    }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -99,10 +115,49 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: hangouts.length,
-        itemBuilder: (context, index) {
-          return ListTile(title: Text(hangouts[index].title));
+      body: FutureBuilder<List<Hangout>>(
+        future: getAllHangouts(),
+        builder: (BuildContext context, AsyncSnapshot<List<Hangout>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                return Center(
+                  child: Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                            leading:
+                                Icon(Icons.chevron_right_rounded, size: 40),
+                            title: Text(snapshot.data[index].title ?? ""),
+                            subtitle: Text(snapshot.data[index].date ?? "")),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            TextButton(
+                              child: const Text('VIEW MORE'),
+                              onPressed: () {/* ... */},
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton(
+                              child: const Text('JOIN'),
+                              onPressed: () {/* ... */},
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return new Text("${snapshot.error}, this is error");
+          }
+          // by dafulat, show a loading spinner
+          return Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton: Builder(
@@ -139,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (result != null) {
         var i = hangouts.length;
-        hangouts.add(new HangoutInfo('test $i', '$result'));
+        hangouts.add(new Hangout('test $i', '$result'));
       }
     });
   }
