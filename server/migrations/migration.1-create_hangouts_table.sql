@@ -3,8 +3,8 @@ CREATE SEQUENCE _Hangout_id_seq;
 CREATE TABLE _Hangout (
     id bigint PRIMARY KEY DEFAULT nextval('_Hangout_id_seq'),
     title text NOT NULL,
-    start_time timestamp with time zone NOT NULL,
-    end_time timestamp with time zone NULL
+    start_time text NOT NULL,
+    end_time text NOT NULL
 );
 
 ALTER SEQUENCE _Hangout_id_seq
