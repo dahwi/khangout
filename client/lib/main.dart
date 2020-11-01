@@ -38,13 +38,13 @@ class MyApp extends StatelessWidget {
 
 class Hangout {
   final String title;
-  final String date;
-
-  Hangout(this.title, this.date);
+  final String startTime;
+  final String endTime;
+  Hangout(this.title, this.startTime, this.endTime);
 
   @override
   String toString() {
-    return 'Hangout{title: $title, date: $date}';
+    return 'Hangout{title: $title, start: $startTime, end: $endTime}';
   }
 
   // // Convert a Hangout into a Map. The keys must correspond to the names of the
@@ -87,8 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < data.length; i++) {
       String title = data[i]["title"];
       String startTime = data[i]["start_time"];
-      String date = startTime.substring(0, 10);
-      Hangout hangout = new Hangout(title, date);
+      String endTime = data[i]["end_time"];
+
+      Hangout hangout = new Hangout(title, startTime, endTime);
       list.add(hangout);
     }
 
@@ -155,7 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             leading:
                                 Icon(Icons.chevron_right_rounded, size: 40),
                             title: Text(snapshot.data[index].title ?? ""),
-                            subtitle: Text(snapshot.data[index].date ?? "")),
+                            subtitle: Text(
+                                '${snapshot.data[index].startTime} - ${snapshot.data[index].endTime}')),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -532,11 +534,12 @@ class FilloutFormState extends State<FilloutForm> {
 
                 Map<String, dynamic> newHangout = {
                   'title': titleCtl.text,
-                  'start_time': timeCtl0.text,
-                  'end_time': timeCtl1.text
+                  'start_time': dateCtl.text + " " + timeCtl0.text,
+                  'end_time': dateCtl.text + " " + timeCtl1.text
                 };
-
+                print(newHangout);
                 Navigator.pop(context, newHangout);
+                titleCtl.clear();
                 dateCtl.clear();
                 timeCtl0.clear();
                 timeCtl1.clear();
