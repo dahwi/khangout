@@ -46,7 +46,16 @@ class Hangout {
   String toString() {
     return 'Hangout{title: $title, date: $date}';
   }
+
+  // // Convert a Hangout into a Map. The keys must correspond to the names of the
+  // // columns in the database.
+  // Map<String, dynamic> toMap() {
+  //   return {'id': id, 'title': title};
+  // }
 }
+
+// status of any http request
+enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
 
 class MyHomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -69,33 +78,48 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Hangout> hangouts = [];
 
+  static const _hangoutsUrl = 'http://localhost:8888/hangouts';
+  static final _headers = {'Content-Type': 'application/json'};
+
+  List<Hangout> createHangoutList(List data) {
+    List<Hangout> list = new List();
+
+    for (int i = 0; i < data.length; i++) {
+      String title = data[i]["title"];
+      String startTime = data[i]["start_time"];
+      String date = startTime.substring(0, 10);
+      Hangout hangout = new Hangout(title, date);
+      list.add(hangout);
+    }
+
+    return list;
+  }
+
+  Future<List<Hangout>> getAllHangouts() async {
+    final response = await http.get(_hangoutsUrl);
+    print(response.body);
+    List responseJson = json.decode(response.body.toString());
+    List<Hangout> hangoutList = createHangoutList(responseJson);
+    print(hangoutList);
+    return hangoutList;
+  }
+
+  Future createHangout(Map<String, dynamic> hangoutInfo) async {
+    var httpRequestStatus = HttpRequestStatus.NOT_DONE;
+    final response = await http.post(_hangoutsUrl,
+        headers: _headers, body: json.encode(hangoutInfo));
+    if (response.statusCode == 200) {
+      print(response.body.toString());
+      httpRequestStatus = HttpRequestStatus.DONE;
+    } else {
+      httpRequestStatus = HttpRequestStatus.ERROR;
+    }
+
+    return httpRequestStatus;
+  }
+
   @override
   Widget build(BuildContext context) {
-    const _hangoutsUrl = 'http://localhost:8888/hangouts';
-
-    List<Hangout> createHangoutList(List data) {
-      List<Hangout> list = new List();
-
-      for (int i = 0; i < data.length; i++) {
-        String title = data[i]["title"];
-        String startTime = data[i]["start_time"];
-        String date = startTime.substring(0, 10);
-        Hangout hangout = new Hangout(title, date);
-        list.add(hangout);
-      }
-
-      return list;
-    }
-
-    Future<List<Hangout>> getAllHangouts() async {
-      final response = await http.get(_hangoutsUrl);
-      print(response.body);
-      List responseJson = json.decode(response.body.toString());
-      List<Hangout> hangoutList = createHangoutList(responseJson);
-      print(hangoutList);
-      return hangoutList;
-    }
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -187,16 +211,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Scaffold.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(SnackBar(
-        content: Text("$result"),
+        content: Text("Saved!"),
         duration: Duration(seconds: 3),
       ));
 
-    setState(() {
-      if (result != null) {
-        var i = hangouts.length;
-        hangouts.add(new Hangout('test $i', '$result'));
-      }
-    });
+    HttpRequestStatus httpRequestStatus = await createHangout(result);
+    if (httpRequestStatus == HttpRequestStatus.DONE) {
+      setState(() {});
+    }
   }
 }
 
@@ -220,6 +242,7 @@ class FilloutForm extends StatefulWidget {
   }
 }
 
+TextEditingController titleCtl = TextEditingController();
 TextEditingController dateCtl = TextEditingController();
 TextEditingController timeCtl0 = TextEditingController(); //start time
 TextEditingController timeCtl1 = TextEditingController(); //end time
@@ -387,6 +410,7 @@ class FilloutFormState extends State<FilloutForm> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                controller: titleCtl,
                 decoration: const InputDecoration(
                     icon: Icon(Icons.title),
                     hintText: 'Add Title',
@@ -505,13 +529,19 @@ class FilloutFormState extends State<FilloutForm> {
                 // you'd often call a server or save the information in a database.
                 // Scaffold.of(context)
                 //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+
+                Map<String, dynamic> newHangout = {
+                  'title': titleCtl.text,
+                  'start_time': timeCtl0.text,
+                  'end_time': timeCtl1.text
+                };
+
+                Navigator.pop(context, newHangout);
                 dateCtl.clear();
                 timeCtl0.clear();
                 timeCtl1.clear();
                 onlineStatus.clear();
                 category.clear();
-
-                Navigator.pop(context, 'Saved!');
               }
             },
             tooltip: 'Save',
