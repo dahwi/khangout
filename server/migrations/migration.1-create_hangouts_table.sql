@@ -1,17 +1,17 @@
-CREATE SEQUENCE hangout_id_seq;
+CREATE SEQUENCE _Hangout_id_seq;
 
-CREATE TABLE hangout (
-    id bigint PRIMARY KEY DEFAULT nextval('hangout_id_seq'),
+CREATE TABLE _Hangout (
+    id bigint PRIMARY KEY DEFAULT nextval('_Hangout_id_seq'),
     title text NOT NULL,
     start_time timestamp with time zone NOT NULL,
     end_time timestamp with time zone NULL
 );
 
-ALTER SEQUENCE hangout_id_seq
-OWNED BY hangout.id;
+ALTER SEQUENCE _Hangout_id_seq
+OWNED BY _Hangout.id;
 
-CREATE INDEX hangout_start_time ON hangout USING btree(start_time);
-CREATE INDEX hangout_end_time ON hangout USING btree(end_time);
+CREATE INDEX _Hangout_start_time ON _Hangout USING btree(start_time);
+CREATE INDEX _Hangout_end_time ON _Hangout USING btree(end_time);
 
 
 
