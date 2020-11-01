@@ -20,12 +20,19 @@ class ServerChannel extends ApplicationChannel {
     logger.onRecord.listen(
         (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
 
+    // load config.yaml and use its values to set up out database connection
+    final config = HangoutConfig(options.configurationFilePath);
+
     // find all of our ManagedObject<T> subclasses and compile them into a data model
     final dataModel = ManagedDataModel.fromCurrentMirrorSystem();
     // PostgresSQLPersistentStore takes database connection information that will be used to
     // connect and send queries to a database
     final persistentStore = PostgreSQLPersistentStore.fromConnectionInfo(
-        "hangouts_user", "password", "localhost", 5432, "hangouts");
+        config.database.username,
+        config.database.password,
+        config.database.host,
+        config.database.port,
+        config.database.databaseName);
 
     context = ManagedContext(dataModel, persistentStore);
   }
@@ -49,4 +56,10 @@ class ServerChannel extends ApplicationChannel {
     router.route('/hangouts/[:id]').link(() => HangoutController(context));
     return router;
   }
+}
+
+class HangoutConfig extends Configuration {
+  HangoutConfig(String path) : super.fromFile(File(path));
+
+  DatabaseConfiguration database;
 }
