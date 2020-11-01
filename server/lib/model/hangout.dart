@@ -8,14 +8,14 @@ class _Hangout {
   @primaryKey
   int id;
 
-  @Column(unique: true)
+  @Column(nullable: false, indexed: true)
   String title;
 
-  @Column()
-  DateTime start_time;
+  @Column(nullable: false, indexed: true)
+  String start_time;
 
-  @Column()
-  DateTime end_time;
+  @Column(nullable: false, indexed: true)
+  String end_time;
 
   // // Convert a Hangout into a Map. The keys must correspond to the names of the
   // // columns in the database.
