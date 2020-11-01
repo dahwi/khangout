@@ -6,13 +6,6 @@ class HangoutController extends ResourceController {
   HangoutController(this.context);
 
   final ManagedContext context;
-  // final _hangouts = [
-  //   {'id': 11, 'name': 'Captain America'},
-  //   {'id': 12, 'name': 'Ironman'},
-  //   {'id': 13, 'name': 'Wonder Woman'},
-  //   {'id': 14, 'name': 'Hulk'},
-  //   {'id': 15, 'name': 'Black Widow'},
-  // ];
 
   // GET
   // get a list of hangouts
@@ -37,7 +30,8 @@ class HangoutController extends ResourceController {
     return Response.ok(hangout);
   }
 
-  // POST
+  // POST; Insert new hangout info into the database
+  // The request will contain the JSON representation of a hangout in its body
   @Operation.post()
   Future<Response> createHangout(@Bind.body() Hangout inputHangout) async {
     final query = Query<Hangout>(context)..values = inputHangout;
