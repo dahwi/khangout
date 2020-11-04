@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'Widgets/LoginPage.dart';
 
 main() {
   runApp(MyApp());
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'KHangout'),
+      home: LoginPage(),
     );
   }
 }
