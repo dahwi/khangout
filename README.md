@@ -46,6 +46,7 @@ After succesfully install Android Studio and Xcode, set up Android and iOS emula
     
  After successfullt set up emulators, run the app using
    - run ```aqueduct serve``` (it runs the web server where RESTful api is built to perform CRUD operations with Postgres)
+   - run ```adb reverse tcp:8888 tcp:8888``` to forward the port of your Android emulator or device to your computer's port
    - VS code
       - Select a device from the Device Selector area or launch a simulator if no device exists
       - Run > Start Debugging
