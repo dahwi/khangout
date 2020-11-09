@@ -1,0 +1,4 @@
+#Mon Oct 26 11:50:10 PDT 2020
+base.0=/Users/dabinlee/Desktop/School/Fall_2020/COMP 490/khangout.nosync/build/app/intermediates/dex/debug/mergeDexDebug/out/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
