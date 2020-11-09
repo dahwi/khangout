@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'src/covidQuestionnaire.dart';
 
 main() {
   runApp(MyApp());
@@ -168,7 +169,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             const SizedBox(width: 8),
                             TextButton(
                               child: const Text('JOIN'),
-                              onPressed: () {/* ... */},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CovidCheck()));
+                              },
                             ),
                             const SizedBox(width: 8),
                           ],
