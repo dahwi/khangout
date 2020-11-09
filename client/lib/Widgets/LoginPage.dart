@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:khangout/main.dart';
+import '../main.dart';
+import 'signUpPage.dart';
 
 class LoginPage extends StatefulWidget{
   @override
@@ -10,8 +11,10 @@ class LoginPage extends StatefulWidget{
 class LoginPageState extends State<LoginPage>{
   final _username = TextEditingController();
   final _password = TextEditingController();
+  final _forgottenUsername = TextEditingController();
   bool _validateUsername = false;
   bool _validatePassword = false;
+  static bool _validateForgottenUsername = false;
   bool _isSelected = false;
 
   void _radio(){
@@ -48,6 +51,62 @@ class LoginPageState extends State<LoginPage>{
     ),
   );
 
+  void _showForgotPasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Enter your email address',
+              style: TextStyle(
+                fontFamily: "Poppins-Bold",
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: TextField(
+              controller: _forgottenUsername,
+              decoration: InputDecoration(
+                hintText: "Insert Email Address..",
+                hintStyle: TextStyle(
+                  color: Colors.grey, fontSize: 15.0,
+                ),
+                errorText: _validateForgottenUsername ? 'Email Address Can\'t Be Empty' : null,
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _forgottenUsername.clear();
+                    });
+                    Navigator.of(context).pop();
+                  }),
+              FlatButton(
+                child: Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 18),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _forgottenUsername.text.isEmpty ? _validateForgottenUsername = true : _validateForgottenUsername = false;
+                  });
+                  if(_forgottenUsername.text.isNotEmpty){
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
+          );
+        }
+        );
+      }
+    );
+  }
+
   @override 
   Widget build(BuildContext context){
     ScreenUtil.init(context, designSize: Size(750, 1334), allowFontScaling: true);
@@ -68,7 +127,7 @@ class LoginPageState extends State<LoginPage>{
           ),  
           SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.only(left: 20.0, right: 28.0, top: 150.0),
+              padding: EdgeInsets.only(left: 20.0, right: 28.0, top: 160.0),
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -95,77 +154,79 @@ class LoginPageState extends State<LoginPage>{
                     ),
                     child: Padding(
                       padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-                      child: Column(
+                      child: SingleChildScrollView(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text("Login",
-                            style: TextStyle(
-                              fontSize: ScreenUtil().setSp(45),
-                              fontFamily: "Poppins-Bold",
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: .6,
-                            ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(30),
-                          ),
-                          Text("Username",
-                            style: TextStyle(
-                              fontSize: ScreenUtil().setSp(35),
-                              fontFamily: "Poppins-Medium",
-                            ),
-                          ),
-                          TextField(
-                            controller: _username,
-                            decoration: InputDecoration(
-                              hintText: "Insert username..",
-                              hintStyle: TextStyle(
-                                color: Colors.grey, fontSize: 15.0,
+                            Text("Login",
+                              style: TextStyle(
+                                fontSize: ScreenUtil().setSp(45),
+                                fontFamily: "Poppins-Bold",
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: .6,
                               ),
-                              errorText: _validateUsername ? 'Username Can\'t Be Empty' : null,
                             ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(30),
-                          ),
-                          Text("Password",
-                            style: TextStyle(
-                              fontSize: ScreenUtil().setSp(35),
-                              fontFamily: "Poppins-Medium",
+                            SizedBox(
+                              height: ScreenUtil().setHeight(30),
                             ),
-                          ),
-                          TextField(
-                            controller: _password,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              hintText: "Insert password..",
-                              hintStyle: TextStyle(
-                                color: Colors.grey, fontSize: 15.0,
+                            Text("USERNAME",
+                              style: TextStyle(
+                                fontSize: ScreenUtil().setSp(35),
+                                fontFamily: "Poppins-Medium",
                               ),
-                              errorText: _validatePassword ? 'Password Can\'t Be Empty' : null,
                             ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(35),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              new GestureDetector(
-                                onTap: () {
-                                  print('Redirect to forgot password popup');
-                                },
-                                child: Text("Forgot Password?",
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontFamily: "Poppins-Medium",
-                                    fontSize: ScreenUtil().setSp(28),
+                            TextField(
+                              controller: _username,
+                              decoration: InputDecoration(
+                                hintText: "Insert username..",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey, fontSize: 15.0,
+                                ),
+                                errorText: _validateUsername ? 'Username Can\'t Be Empty' : null,
+                              ),
+                            ),
+                            SizedBox(
+                              height: ScreenUtil().setHeight(30),
+                            ),
+                            Text("PASSWORD",
+                              style: TextStyle(
+                                fontSize: ScreenUtil().setSp(35),
+                                fontFamily: "Poppins-Medium",
+                              ),
+                            ),
+                            TextField(
+                              controller: _password,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                hintText: "Insert password..",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey, fontSize: 15.0,
+                                ),
+                                errorText: _validatePassword ? 'Password Can\'t Be Empty' : null,
+                              ),
+                            ),
+                            SizedBox(
+                              height: ScreenUtil().setHeight(35),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                new GestureDetector(
+                                  onTap: () {
+                                    _showForgotPasswordDialog(context);
+                                  },
+                                  child: Text("Forgot Password?",
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontFamily: "Poppins-Medium",
+                                      fontSize: ScreenUtil().setSp(28),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -294,7 +355,10 @@ class LoginPageState extends State<LoginPage>{
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                print('Sign Up page under construction..');
+                                Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => SignUpPage()),
+                                  );
                               }, 
                               child: Center(
                                 child: Text("SIGN UP",
