@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flushbar/flushbar.dart';
 import '../main.dart';
 import 'signUpPage.dart';
 
@@ -95,7 +96,14 @@ class LoginPageState extends State<LoginPage>{
                     _forgottenUsername.text.isEmpty ? _validateForgottenUsername = true : _validateForgottenUsername = false;
                   });
                   if(_forgottenUsername.text.isNotEmpty){
+                    var forgotEmail = _forgottenUsername.text;
                     Navigator.of(context).pop();
+                    _forgottenUsername.clear();
+                    Flushbar(
+                      title: "Forgot Password",
+                      message: "Email send to recover password to: $forgotEmail",
+                      duration:   Duration(seconds: 3),
+                    )..show(context);
                   }
                 },
               ),
@@ -284,15 +292,15 @@ class LoginPageState extends State<LoginPage>{
                                   _username.text.isEmpty ? _validateUsername = true : _validateUsername = false;
                                   _password.text.isEmpty ? _validatePassword = true : _validatePassword = false;
                                 });
-                                if(!_validateUsername){
-                                  if(!_validatePassword){
-                                    Navigator.push(
-                                      context, 
-                                      MaterialPageRoute(builder: (context) => MyHomePage(title: 'KHangout')),
-                                    );
-                                  }
+                                if(!_validateUsername && !_validatePassword){
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => MyHomePage(title: 'KHangout')),
+                                  );
+                                  _username.clear();
+                                  _password.clear();
                                 }
-                              }, // Validator for text fields
+                              },
                               child: Center(
                                 child: Text("SIGN IN",
                                   style: TextStyle(
