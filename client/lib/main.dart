@@ -97,6 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static const _hangoutsUrl = 'http://localhost:8888/hangouts';
   static final _headers = {'Content-Type': 'application/json'};
+  bool isSearching = false;
+  var searchQuery = TextEditingController();
 
   List<Hangout> createHangoutList(List data) {
     List<Hangout> list = new List();
@@ -126,6 +128,18 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Hangout> hangoutList = createHangoutList(responseJson);
     print(hangoutList);
     return hangoutList;
+  }
+
+  Future<List<Hangout>> getSelectedHangouts(value) async {
+    final response = await http.get(_hangoutsUrl);
+    List responseJson = json.decode(response.body.toString());
+    responseJson.removeWhere((item) => 
+      item['title'] != value 
+      && item['category'] != value 
+      && item['hangout_type'] != value
+    );
+    List<Hangout> selectedHangoutList = createHangoutList(responseJson);
+    return selectedHangoutList;
   }
 
   Future createHangout(Map<String, dynamic> hangoutInfo) async {
@@ -160,62 +174,161 @@ class _MyHomePageState extends State<MyHomePage> {
             "assets/images/KalamazooCollege.png",
           ),
         ),
-        title: Text(widget.title),
+        title: !isSearching 
+          ? Text(widget.title) 
+          : TextField(
+              onChanged: (value) {
+                setState((){
+                  searchQuery.text = value;
+                });
+              print(searchQuery.text);
+              },
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: "Poppins-Bold",
+              ),
+              decoration: InputDecoration(
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ),
+                hintText: "Search Hangout..",
+                hintStyle: TextStyle(color: Colors.black),
+              ),
+            ),
         centerTitle: true,
+        actions: <Widget>[
+          isSearching 
+          ? IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: (){
+                setState((){
+                  isSearching = false;
+                });
+              },
+          ) 
+          : IconButton(
+              icon: Icon(Icons.search),
+              onPressed: (){
+                setState((){
+                  isSearching = true;
+                });
+              }
+          ),
+        ],
       ),
-      body: FutureBuilder<List<Hangout>>(
-        future: getAllHangouts(),
-        builder: (BuildContext context, AsyncSnapshot<List<Hangout>> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                return Center(
-                  child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                            leading:
-                                Icon(Icons.chevron_right_rounded, size: 40),
+      body: isSearching ? 
+        FutureBuilder<List<Hangout>>(
+          future: getSelectedHangouts(searchQuery.text),
+          builder: (BuildContext context, AsyncSnapshot<List<Hangout>> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: Card(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            leading: Icon(
+                              Icons.chevron_right_rounded, size: 40,
+                            ),
                             title: Text(snapshot.data[index].title ?? ""),
                             subtitle: Text(
-                                '${snapshot.data[index].startTime} - ${snapshot.data[index].endTime}')),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            TextButton(
-                              child: const Text('VIEW MORE'),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
+                              '${snapshot.data[index].startTime} - ${snapshot.data[index].endTime}'
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              TextButton(
+                                child: const Text('VIEW MORE'),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
                                       builder: (context) => ViewMorePage(
-                                          hangout: snapshot.data[index])),
-                                );
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            TextButton(
-                              child: const Text('JOIN'),
-                              onPressed: () {/* ... */},
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                        ),
-                      ],
+                                        hangout: snapshot.data[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8,),
+                              TextButton(
+                                child: const Text('JOIN'),
+                                onPressed: () {},
+                              ),
+                              const SizedBox(width: 8,),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return new Text("${snapshot.error}, this is error");
-          }
-          // by dafulat, show a loading spinner
-          return Center(child: CircularProgressIndicator());
-        },
-      ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return new Text("${snapshot.error}, this is error");
+            }
+            // by dafulat, show a loading spinner
+            return Center(child: CircularProgressIndicator());
+          },
+        )
+      : FutureBuilder<List<Hangout>>(
+          future: getAllHangouts(),
+          builder: (BuildContext context, AsyncSnapshot<List<Hangout>> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: Card(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                              leading:
+                                  Icon(Icons.chevron_right_rounded, size: 40),
+                              title: Text(snapshot.data[index].title ?? ""),
+                              subtitle: Text(
+                                  '${snapshot.data[index].startTime} - ${snapshot.data[index].endTime}')),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              TextButton(
+                                child: const Text('VIEW MORE'),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ViewMorePage(
+                                            hangout: snapshot.data[index])),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              TextButton(
+                                child: const Text('JOIN'),
+                                onPressed: () {/* ... */},
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return new Text("${snapshot.error}, this is error");
+            }
+            // by dafulat, show a loading spinner
+            return Center(child: CircularProgressIndicator());
+          },
+        ),
       floatingActionButton: Builder(
           builder: (context) => FloatingActionButton(
                 onPressed: () {
