@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(),
+      // home: LoginPage(),
+      home: MyHomePage(title: 'KHangouts',),
     );
   }
 }
@@ -123,20 +124,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<List<Hangout>> getAllHangouts() async {
     final response = await http.get(_hangoutsUrl);
-    print(response.body);
+    // print(response.body);
     List responseJson = json.decode(response.body.toString());
     List<Hangout> hangoutList = createHangoutList(responseJson);
-    print(hangoutList);
+    // print(hangoutList);
     return hangoutList;
+  }
+
+  String categorySearchHelper(val, item) {
+    bool foundCategory = false;
+    int categoryLength = 0;
+    String noMatch = 'fdsajnweijjfkneiuaskdhfneu234831h4r31nu2nifhjbeanjdsfhdnsau';
+    if(item != null){
+      for(var category in item['category'].toLowerCase().split(', ')){
+        categoryLength ++;
+        if(val == category){
+          return category;
+        } else if(categoryLength == item['category'].split(', ').length && foundCategory == false){
+          return noMatch;
+        }
+      }
+    }
+    return null;
   }
 
   Future<List<Hangout>> getSelectedHangouts(value) async {
     final response = await http.get(_hangoutsUrl);
     List responseJson = json.decode(response.body.toString());
+    value.toLowerCase();
+    
     responseJson.removeWhere((item) => 
-      item['title'] != value 
-      && item['category'] != value 
-      && item['hangout_type'] != value
+      item['title'].toLowerCase() != value 
+      && categorySearchHelper(value, item) != value
+      && item['hangout_type'].toLowerCase() != value
     );
     List<Hangout> selectedHangoutList = createHangoutList(responseJson);
     return selectedHangoutList;
@@ -181,7 +201,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 setState((){
                   searchQuery.text = value;
                 });
-              print(searchQuery.text);
               },
               style: TextStyle(
                 color: Colors.black,
@@ -204,6 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: (){
                 setState((){
                   isSearching = false;
+                  searchQuery.clear();
                 });
               },
           ) 
