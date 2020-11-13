@@ -186,6 +186,9 @@ class LoginPageState extends State<LoginPage>{
                             TextField(
                               controller: _username,
                               decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.person,
+                                ),
                                 hintText: "Insert username..",
                                 hintStyle: TextStyle(
                                   color: Colors.grey, fontSize: 15.0,
@@ -206,6 +209,9 @@ class LoginPageState extends State<LoginPage>{
                               controller: _password,
                               obscureText: true,
                               decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                ),
                                 hintText: "Insert password..",
                                 hintStyle: TextStyle(
                                   color: Colors.grey, fontSize: 15.0,
@@ -269,16 +275,11 @@ class LoginPageState extends State<LoginPage>{
                           width: ScreenUtil().setWidth(330),
                           height: ScreenUtil().setHeight(100),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.white,
-                                Colors.blue,
-                              ],
-                            ),
+                            color: Colors.blue,
                             borderRadius: BorderRadius.circular(6.0),
                             boxShadow: [
                               BoxShadow(
-                                color: Color(0xff9800).withOpacity(.2),
+                                color: Colors.black.withOpacity(.4),
                                 offset: Offset(2.0, 2.0),
                                 blurRadius: 6.0,
                               ),
@@ -304,7 +305,8 @@ class LoginPageState extends State<LoginPage>{
                               child: Center(
                                 child: Text("SIGN IN",
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                     fontFamily: "Poppins-Bold",
                                     fontSize: 18,
                                     letterSpacing: 1.0,
@@ -344,16 +346,11 @@ class LoginPageState extends State<LoginPage>{
                           width: ScreenUtil().setWidth(330),
                           height: ScreenUtil().setHeight(100),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.white,
-                                Colors.deepPurple,
-                              ],
-                            ),
+                            color: Colors.deepPurple,
                             borderRadius: BorderRadius.circular(6.0),
                             boxShadow: [
                               BoxShadow(
-                                color: Color(0xff9800).withOpacity(.2),
+                                color: Colors.black.withOpacity(.4),
                                 offset: Offset(2.0, 2.0),
                                 blurRadius: 6.0,
                               ),
@@ -371,7 +368,8 @@ class LoginPageState extends State<LoginPage>{
                               child: Center(
                                 child: Text("SIGN UP",
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                     fontFamily: "Poppins-Bold",
                                     fontSize: 18,
                                     letterSpacing: 1.0,
