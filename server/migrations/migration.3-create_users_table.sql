@@ -1,17 +1,12 @@
-CREATE SEQUENCE kzoo_user_id_seq;
-
 CREATE TABLE kzoo_user (
-    id bigint PRIMARY KEY DEFAULT nextval('kzoo_user_id_seq'),
-    email text NOT NULL,
+    email text PRIMARY KEY NOT NULL,
     user_password text NOT NULL,
-    UNIQUE(email)
+    hangouts bigint[]
 );
 
-ALTER SEQUENCE kzoo_user_id_seq
-OWNED BY kzoo_user.id;
-
 ALTER TABLE _Hangout
-ADD COLUMN creater TEXT NOT NULL,
+ADD COLUMN creater text NOT NULL,
+ADD COLUMN participants text[],
 ADD CONSTRAINT _Hangout_creater_fkey
 FOREIGN KEY (creater) REFERENCES kzoo_user(email) ON UPDATE CASCADE ON DELETE CASCADE;
 
