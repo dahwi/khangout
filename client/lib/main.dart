@@ -131,16 +131,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String categorySearchHelper(val, item) {
-    bool foundCategory = false;
     int categoryLength = 0;
-    String noMatch = 'fdsajnweijjfkneiuaskdhfneu234831h4r31nu2nifhjbeanjdsfhdnsau';
     if(item != null){
       for(var category in item['category'].toLowerCase().split(', ')){
         categoryLength ++;
         if(val == category){
           return category;
-        } else if(categoryLength == item['category'].split(', ').length && foundCategory == false){
-          return noMatch;
+        } else if(categoryLength == item['category'].split(', ').length){
+          return null;
         }
       }
     }
