@@ -13,5 +13,5 @@ OWNED BY _Hangout.id;
 CREATE INDEX _Hangout_start_time ON _Hangout USING btree(start_time);
 CREATE INDEX _Hangout_end_time ON _Hangout USING btree(end_time);
 
-
-
+grant all on _hangout, _hangout_id_seq to nikhil;
+grant all on _hangout, _hangout_id_seq to binny;
