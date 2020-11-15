@@ -1,8 +1,8 @@
 import '../server.dart';
 
-class User extends ManagedObject<Kzoo_User> implements Kzoo_User {}
+class User extends ManagedObject<kzoo_user> implements kzoo_user {}
 
-class Kzoo_User {
+class kzoo_user {
   @primaryKey
   int id;
 
