@@ -1,14 +1,18 @@
+CREATE SEQUENCE kzoo_user_id_seq;
+
 CREATE TABLE kzoo_user (
-    email text PRIMARY KEY NOT NULL,
-    user_password text NOT NULL,
-    hangouts bigint[]
+    id bigint PRIMARY KEY DEFAULT nextval('kzoo_user_id_seq'),
+    email text NOT NULL,
+    user_password text NOT NULL
 );
 
+ALTER SEQUENCE kzoo_user_id_seq
+OWNED BY kzoo_user.id;
+
 ALTER TABLE _Hangout
-ADD COLUMN creater text NOT NULL,
-ADD COLUMN participants text[],
+ADD COLUMN creater bigint NOT NULL,
 ADD CONSTRAINT _Hangout_creater_fkey
-FOREIGN KEY (creater) REFERENCES kzoo_user(email) ON UPDATE CASCADE ON DELETE CASCADE;
+FOREIGN KEY (creater) REFERENCES kzoo_user(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 CREATE INDEX _Hangout_creater ON _Hangout USING btree(creater);
