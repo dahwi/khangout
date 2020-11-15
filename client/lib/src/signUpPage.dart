@@ -86,7 +86,11 @@ class SignUpPageState extends State<SignUpPage> {
                           _password.text.isEmpty ? _validatePassword = true : _validatePassword = false;
                         });
                         if(!_validateEmail && !_validatePassword){
-                          Navigator.of(context).pop();
+                          Map<String, dynamic> newUser = {
+                            'email': _email.text,
+                            'user_password': _password.text,
+                          };
+                          Navigator.pop(context, newUser);
                           Flushbar(
                             title: "Account Created!",
                             message: "Thank you for joining KHangouts!",
@@ -124,6 +128,8 @@ class SignUpPageState extends State<SignUpPage> {
                     ),
                     child: InkWell(
                       onTap: () {
+                        _email.clear();
+                        _password.clear();
                         Navigator.of(context).pop();
                       },
                       child: Center(

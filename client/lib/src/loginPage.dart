@@ -3,6 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flushbar/flushbar.dart';
 import '../main.dart';
 import 'signUpPage.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+// status of any http request
+enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,6 +16,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  static const _usersUrl = 'http://localhost:8888/users';
+  static final _headers = {'Content-Type': 'application/json'};
+
   final _username = TextEditingController();
   final _password = TextEditingController();
   final _forgottenUsername = TextEditingController();
@@ -119,6 +128,33 @@ class LoginPageState extends State<LoginPage> {
             );
           });
         });
+  }
+
+  Future createUser(Map<String, dynamic> userInfo) async {
+    var httpRequestStatus = HttpRequestStatus.NOT_DONE;
+    final response = await http.post(_usersUrl,
+      headers: _headers, body: json.encode(userInfo));
+    if (response.statusCode == 200) { 
+      print(response.body.toString());
+      httpRequestStatus = HttpRequestStatus.DONE;
+    } else {
+      httpRequestStatus = HttpRequestStatus.ERROR;
+    }
+    return httpRequestStatus;
+  }
+
+  Future<void> _navigateAndDisplaySignUp(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SignUpPage()),
+    );
+
+    HttpRequestStatus httpRequestStatus = await createUser(result);
+    if (httpRequestStatus == HttpRequestStatus.DONE) {
+      setState(() {
+        print('User created');
+      });
+    }
   }
 
   @override
@@ -387,11 +423,7 @@ class LoginPageState extends State<LoginPage> {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignUpPage()),
-                                );
+                                _navigateAndDisplaySignUp(context);
                               },
                               child: Center(
                                 child: Text(
