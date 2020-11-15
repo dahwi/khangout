@@ -1,4 +1,5 @@
 import 'controller/hangout_controller.dart';
+import 'controller/user_controller.dart';
 import 'server.dart';
 
 /// This type initializes an application.
@@ -54,6 +55,7 @@ class ServerChannel extends ApplicationChannel {
     });
 
     router.route('/hangouts/[:id]').link(() => HangoutController(context));
+    router.route('/users/[:email]').link(() => UserController(context));
     return router;
   }
 }
