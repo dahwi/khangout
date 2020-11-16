@@ -26,6 +26,8 @@ class LoginPageState extends State<LoginPage> {
   bool _validatePassword = false;
   static bool _validateForgottenUsername = false;
   bool _isSelected = false;
+  bool _inauthEmail = false;
+  bool _inauthPassword = false;
 
   void _radio() {
     setState(() {
@@ -130,6 +132,42 @@ class LoginPageState extends State<LoginPage> {
         });
   }
 
+  Future getUserByEmail(String email) async {
+    var specificUrl = _usersUrl + '/' + email;
+    final response = await http.get(specificUrl);
+    if (response.statusCode == 200){
+      return response;
+    } else {
+      this.setState(() {
+        _username.clear();
+        _password.clear();
+        _inauthEmail = true;
+      });
+      return null;
+    }
+  }
+
+  Future<void> _authenticateUserCred(String userEmail, String userPassword) async {
+    final response = await getUserByEmail(userEmail);
+    if (response != null) {
+      var responseJson = json.decode(response.body);
+      var responsePass = responseJson["user_password"];
+      if(userPassword != responsePass){
+        this.setState(() {
+          _password.clear();
+          _inauthPassword = true;
+        });
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  MyHomePage(title: 'KHangout')),
+        );
+      }
+    }
+  }
+
   Future createUser(Map<String, dynamic> userInfo) async {
     var httpRequestStatus = HttpRequestStatus.NOT_DONE;
     final response = await http.post(_usersUrl,
@@ -211,9 +249,9 @@ class LoginPageState extends State<LoginPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "Login",
+                              "LOGIN",
                               style: TextStyle(
-                                fontSize: ScreenUtil().setSp(45),
+                                fontSize: ScreenUtil().setSp(50),
                                 fontFamily: "Poppins-Bold",
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: .6,
@@ -223,55 +261,90 @@ class LoginPageState extends State<LoginPage> {
                               height: ScreenUtil().setHeight(30),
                             ),
                             Text(
-                              "USERNAME",
+                              "Username",
                               style: TextStyle(
                                 fontSize: ScreenUtil().setSp(35),
                                 fontFamily: "Poppins-Medium",
                               ),
                             ),
-                            TextField(
-                              controller: _username,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.person,
-                                ),
-                                hintText: "Insert username..",
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15.0,
-                                ),
-                                errorText: _validateUsername
+                            _inauthEmail ?
+                              TextField(
+                                controller: _username,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                  ),
+                                  hintText: "Invalid Username, re-enter/signup",
+                                  hintStyle: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 15.0,
+                                  ),
+                                  errorText: _validateUsername 
                                     ? 'Username Can\'t Be Empty'
-                                    : null,
+                                    : null 
+                                ),
+                              )
+                              : TextField(
+                                controller: _username,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                  ),
+                                  hintText: "Insert username..",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15.0,
+                                  ),
+                                  errorText: _validateUsername 
+                                    ? 'Username Can\'t Be Empty'
+                                    : null 
+                                ),
                               ),
-                            ),
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
                             Text(
-                              "PASSWORD",
+                              "Password",
                               style: TextStyle(
                                 fontSize: ScreenUtil().setSp(35),
                                 fontFamily: "Poppins-Medium",
                               ),
                             ),
-                            TextField(
-                              controller: _password,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.lock,
+                            _inauthPassword ?
+                              TextField(
+                                controller: _password,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                  ),
+                                  hintText: "Invalid Password, please re-enter",
+                                  hintStyle: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 15.0,
+                                  ),
+                                  errorText: _validatePassword
+                                      ? 'Password Can\'t Be Empty'
+                                      : null,
                                 ),
-                                hintText: "Insert password..",
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15.0,
+                              )
+                            : TextField(
+                                controller: _password,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                  ),
+                                  hintText: "Insert password..",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15.0,
+                                  ),
+                                  errorText: _validatePassword
+                                      ? 'Password Can\'t Be Empty'
+                                      : null,
                                 ),
-                                errorText: _validatePassword
-                                    ? 'Password Can\'t Be Empty'
-                                    : null,
                               ),
-                            ),
                             SizedBox(
                               height: ScreenUtil().setHeight(35),
                             ),
@@ -345,22 +418,21 @@ class LoginPageState extends State<LoginPage> {
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  _username.text.isEmpty
-                                      ? _validateUsername = true
-                                      : _validateUsername = false;
-                                  _password.text.isEmpty
-                                      ? _validatePassword = true
-                                      : _validatePassword = false;
+                                  if (_username.text.isEmpty) {
+                                    _validateUsername = true;
+                                    _inauthEmail = false;
+                                  } else {
+                                    _validateUsername = false;
+                                  }
+                                  if (_password.text.isEmpty){
+                                    _validatePassword = true;
+                                    _inauthPassword = false;
+                                  } else {
+                                    _validatePassword = false;
+                                  }
                                 });
                                 if (!_validateUsername && !_validatePassword) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MyHomePage(title: 'KHangout')),
-                                  );
-                                  _username.clear();
-                                  _password.clear();
+                                  _authenticateUserCred(_username.text, _password.text); 
                                 }
                               },
                               child: Center(
