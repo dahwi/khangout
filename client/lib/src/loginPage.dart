@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flushbar/flushbar.dart';
-import 'package:rsa_encrypt/rsa_encrypt.dart';
+// import 'package:rsa_encrypt/rsa_encrypt.dart';
 import '../main.dart';
 import 'signUpPage.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import './rsa.dart';
+// import './rsa.dart';
 
 // status of any http request
 enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
@@ -152,13 +152,15 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _authenticateUserCred(String userEmail, String userPassword) async {
     final response = await getUserByEmail(userEmail);
     if (response != null) {
-      keyPair = await futureKeyPair;
+      // print(response.body);
+      // keyPair = await futureKeyPair;
+      // print(keyPair.runtimeType);
       var responseJson = json.decode(response.body);
-      var responsePass = responseJson["user_password"];
+      var responsePassword = responseJson["user_password"];
       // var encryptedPass = responseJson["user_password"];
       // String decryptedPass = decrypt(encryptedPass, keyPair.privateKey);
       // print(decryptedPass);
-      if(userPassword != responsePass){
+      if(userPassword != responsePassword){
         setState(() {
           _password.clear();
           _inauthPassword = true;
