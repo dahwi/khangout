@@ -28,8 +28,8 @@ class LoginPageState extends State<LoginPage> {
   bool _validatePassword = false;
   static bool _validateForgottenUsername = false;
   bool _isSelected = false;
-  bool _isEmailAuthenticated = false;
-  bool _isPasswordAuthenticated = false;
+  bool _isEmailAuthenticated = true;
+  bool _isPasswordAuthenticated = true;
 
   void _radio() {
     setState(() {
@@ -143,7 +143,7 @@ class LoginPageState extends State<LoginPage> {
       this.setState(() {
         _username.clear();
         _password.clear();
-        _isEmailAuthenticated = true;
+        _isEmailAuthenticated = false;
       });
       return null;
     }
@@ -163,7 +163,7 @@ class LoginPageState extends State<LoginPage> {
       if(userPassword != responsePassword){
         setState(() {
           _password.clear();
-          _isPasswordAuthenticated = true;
+          _isPasswordAuthenticated = false;
         });
       } else {
         Navigator.push(
@@ -281,7 +281,7 @@ class LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
-                            _isEmailAuthenticated ?
+                            !_isEmailAuthenticated ?
                               TextField(
                                 controller: _username,
                                 decoration: InputDecoration(
@@ -350,7 +350,7 @@ class LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
-                            _isPasswordAuthenticated ?
+                            !_isPasswordAuthenticated ?
                               TextField(
                                 controller: _password,
                                 obscureText: true,
@@ -481,13 +481,13 @@ class LoginPageState extends State<LoginPage> {
                                 setState(() {
                                   if (_username.text.isEmpty) {
                                     _validateUsername = true;
-                                    _isEmailAuthenticated = false;
+                                    _isEmailAuthenticated = true;
                                   } else {
                                     _validateUsername = false;
                                   }
                                   if (_password.text.isEmpty){
                                     _validatePassword = true;
-                                    _isPasswordAuthenticated = false;
+                                    _isPasswordAuthenticated = true;
                                   } else {
                                     _validatePassword = false;
                                   }
@@ -563,8 +563,8 @@ class LoginPageState extends State<LoginPage> {
                                   _validateUsername = false;
                                   _validatePassword = false;
                                   _isSelected = false;
-                                  _isEmailAuthenticated = false;
-                                  _isPasswordAuthenticated = false;
+                                  _isEmailAuthenticated = true;
+                                  _isPasswordAuthenticated = true;
                                   _validateForgottenUsername = false;
                                 });
                                 _navigateAndDisplaySignUp(context);
