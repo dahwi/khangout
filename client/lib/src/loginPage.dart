@@ -154,9 +154,11 @@ class LoginPageState extends State<LoginPage> {
     if (response != null) {
       keyPair = await futureKeyPair;
       var responseJson = json.decode(response.body);
-      var encryptedPass = responseJson["user_password"];
-      String decryptedPass = decrypt(encryptedPass, keyPair.privateKey);
-      if(userPassword != decryptedPass){
+      var responsePass = responseJson["user_password"];
+      // var encryptedPass = responseJson["user_password"];
+      // String decryptedPass = decrypt(encryptedPass, keyPair.privateKey);
+      // print(decryptedPass);
+      if(userPassword != responsePass){
         setState(() {
           _password.clear();
           _inauthPassword = true;
@@ -192,14 +194,19 @@ class LoginPageState extends State<LoginPage> {
       MaterialPageRoute(builder: (context) => SignUpPage()),
     );
     if (result != null){
-      keyPair = await futureKeyPair;
-      result["user_password"] = encrypt(result["user_password"], keyPair.publicKey);
-      print(result["user_password"]);
+      // keyPair = await futureKeyPair;
+      // result["user_password"] = encrypt(result["user_password"], keyPair.publicKey);
+      // print(result["user_password"]);
       HttpRequestStatus httpRequestStatus = await createUser(result);
       if (httpRequestStatus == HttpRequestStatus.DONE) {
         setState(() {
           print('User created');
         });
+        Flushbar(
+          title: "Account Created!",
+          message: "Thank you for joining KHangouts!",
+          duration:   Duration(seconds: 3),
+        )..show(context);
       }
     }
   }
@@ -284,7 +291,7 @@ class LoginPageState extends State<LoginPage> {
                                     borderSide: BorderSide(color: Colors.red),   
                                   ),  
                                   focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
+                                    borderSide: BorderSide(color: Colors.red),
                                   ),
                                   hintText: "Invalid Username, re-enter/signup",
                                   hintStyle: TextStyle(
@@ -342,7 +349,7 @@ class LoginPageState extends State<LoginPage> {
                                     borderSide: BorderSide(color: Colors.red),   
                                   ),  
                                   focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
+                                    borderSide: BorderSide(color: Colors.red),
                                   ),
                                   hintText: "Invalid Password, please re-enter",
                                   hintStyle: TextStyle(
@@ -544,6 +551,7 @@ class LoginPageState extends State<LoginPage> {
                                   _isSelected = false;
                                   _inauthEmail = false;
                                   _inauthPassword = false;
+                                  _validateForgottenUsername = false;
                                 });
                                 _navigateAndDisplaySignUp(context);
                               },

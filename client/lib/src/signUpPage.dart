@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -91,11 +90,6 @@ class SignUpPageState extends State<SignUpPage> {
                             'user_password': _password.text,
                           };
                           Navigator.pop(context, newUser);
-                          Flushbar(
-                            title: "Account Created!",
-                            message: "Thank you for joining KHangouts!",
-                            duration:   Duration(seconds: 3),
-                          )..show(context);
                           _email.clear();
                           _password.clear();
                         }
