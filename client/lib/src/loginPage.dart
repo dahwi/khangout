@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
 import '../main.dart';
 import 'signUpPage.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import './rsa.dart';
 
 // status of any http request
 enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
@@ -186,12 +188,22 @@ class LoginPageState extends State<LoginPage> {
       context,
       MaterialPageRoute(builder: (context) => SignUpPage()),
     );
+    if (result != null){
+      keyPair = await futureKeyPair;
 
-    HttpRequestStatus httpRequestStatus = await createUser(result);
-    if (httpRequestStatus == HttpRequestStatus.DONE) {
-      setState(() {
-        print('User created');
-      });
+      print(result["user_password"].runtimeType);
+
+      result["user_password"] = encrypt(result["user_password"], keyPair.publicKey);
+      // String decryptedPassword = decrypt(encryptedPassword, keyPair.privateKey);
+      // print(decryptedPassword);
+      print(result["user_password"].runtimeType);
+
+      HttpRequestStatus httpRequestStatus = await createUser(result);
+      if (httpRequestStatus == HttpRequestStatus.DONE) {
+        setState(() {
+          print('User created');
+        });
+      }
     }
   }
 
@@ -226,18 +238,18 @@ class LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: ScreenUtil().setHeight(500),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.orangeAccent.shade400,
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black12,
-                          offset: Offset(0.0, 15.0),
-                          blurRadius: 15.0,
+                          offset: Offset(0.0, 5.0),
+                          blurRadius: 5.0,
                         ),
                         BoxShadow(
                           color: Colors.black12,
-                          offset: Offset(0.0, 15.0),
-                          blurRadius: 10.0,
+                          offset: Offset(0.0, 5.0),
+                          blurRadius: 5.0,
                         ),
                       ],
                     ),
@@ -246,33 +258,43 @@ class LoginPageState extends State<LoginPage> {
                           EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Text(
-                              "LOGIN",
-                              style: TextStyle(
-                                fontSize: ScreenUtil().setSp(50),
-                                fontFamily: "Poppins-Bold",
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: .6,
-                              ),
-                            ),
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
                             Text(
-                              "Username",
+                              "SIGN IN",
                               style: TextStyle(
-                                fontSize: ScreenUtil().setSp(35),
-                                fontFamily: "Poppins-Medium",
+                                fontSize: ScreenUtil().setSp(70),
+                                fontFamily: "Poppins-Bold",
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 15.0,
                               ),
                             ),
+                            SizedBox(
+                              height: ScreenUtil().setHeight(50),
+                            ),
+                            // Text(
+                            //   "Username",
+                            //   style: TextStyle(
+                            //     fontSize: ScreenUtil().setSp(35),
+                            //     fontFamily: "Poppins-Medium",
+                            //   ),
+                            // ),
                             _inauthEmail ?
                               TextField(
                                 controller: _username,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
                                     Icons.person,
+                                    color: Colors.blue,
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(      
+                                    borderSide: BorderSide(color: Colors.red),   
+                                  ),  
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   hintText: "Invalid Username, re-enter/signup",
                                   hintStyle: TextStyle(
@@ -289,10 +311,17 @@ class LoginPageState extends State<LoginPage> {
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
                                     Icons.person,
+                                    color: Colors.blue,
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(      
+                                    borderSide: BorderSide(color: Colors.deepPurple),   
+                                  ),  
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   hintText: "Insert username..",
                                   hintStyle: TextStyle(
-                                    color: Colors.grey,
+                                    color: Colors.black,
                                     fontSize: 15.0,
                                   ),
                                   errorText: _validateUsername 
@@ -301,15 +330,15 @@ class LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             SizedBox(
-                              height: ScreenUtil().setHeight(30),
+                              height: ScreenUtil().setHeight(50),
                             ),
-                            Text(
-                              "Password",
-                              style: TextStyle(
-                                fontSize: ScreenUtil().setSp(35),
-                                fontFamily: "Poppins-Medium",
-                              ),
-                            ),
+                            // Text(
+                            //   "Password",
+                            //   style: TextStyle(
+                            //     fontSize: ScreenUtil().setSp(35),
+                            //     fontFamily: "Poppins-Medium",
+                            //   ),
+                            // ),
                             _inauthPassword ?
                               TextField(
                                 controller: _password,
@@ -317,6 +346,13 @@ class LoginPageState extends State<LoginPage> {
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
                                     Icons.lock,
+                                    color: Colors.blue,
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(      
+                                    borderSide: BorderSide(color: Colors.red),   
+                                  ),  
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   hintText: "Invalid Password, please re-enter",
                                   hintStyle: TextStyle(
@@ -334,10 +370,17 @@ class LoginPageState extends State<LoginPage> {
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
                                     Icons.lock,
+                                    color: Colors.blue,
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(      
+                                    borderSide: BorderSide(color: Colors.deepPurple),   
+                                  ),  
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
                                   ),
                                   hintText: "Insert password..",
                                   hintStyle: TextStyle(
-                                    color: Colors.grey,
+                                    color: Colors.black,
                                     fontSize: 15.0,
                                   ),
                                   errorText: _validatePassword
@@ -358,7 +401,7 @@ class LoginPageState extends State<LoginPage> {
                                   child: Text(
                                     "Forgot Password?",
                                     style: TextStyle(
-                                      color: Colors.blue,
+                                      color: Colors.deepPurple,
                                       fontFamily: "Poppins-Medium",
                                       fontSize: ScreenUtil().setSp(28),
                                     ),

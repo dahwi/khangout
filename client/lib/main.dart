@@ -4,8 +4,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import './src/loginPage.dart';
 import 'src/filloutform.dart';
+import 'src/rsa.dart';
 
 main() {
+  RSA rsa = new RSA();
+  futureKeyPair = rsa.getKeyPair();
   runApp(MyApp());
 }
 
