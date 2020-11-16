@@ -242,7 +242,7 @@ class LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: ScreenUtil().setHeight(500),
                     decoration: BoxDecoration(
-                      color: Colors.orangeAccent.shade400,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
                         BoxShadow(
@@ -262,22 +262,22 @@ class LoginPageState extends State<LoginPage> {
                           EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
                             Text(
-                              "SIGN IN",
+                              "Username",
                               style: TextStyle(
-                                fontSize: ScreenUtil().setSp(70),
+                                fontSize: ScreenUtil().setSp(40),
                                 fontFamily: "Poppins-Bold",
                                 fontWeight: FontWeight.w900,
-                                letterSpacing: 15.0,
+                                letterSpacing: 4.0,
                               ),
                             ),
                             SizedBox(
-                              height: ScreenUtil().setHeight(50),
+                              height: ScreenUtil().setHeight(30),
                             ),
                             _inauthEmail ?
                               TextField(
@@ -335,6 +335,18 @@ class LoginPageState extends State<LoginPage> {
                               ),
                             SizedBox(
                               height: ScreenUtil().setHeight(50),
+                            ),
+                            Text(
+                              "Password",
+                              style: TextStyle(
+                                fontSize: ScreenUtil().setSp(40),
+                                fontFamily: "Poppins-Bold",
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 4.0,
+                              ),
+                            ),
+                            SizedBox(
+                              height: ScreenUtil().setHeight(30),
                             ),
                             _inauthPassword ?
                               TextField(
