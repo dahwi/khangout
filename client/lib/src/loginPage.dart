@@ -152,10 +152,12 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _authenticateUserCred(String userEmail, String userPassword) async {
     final response = await getUserByEmail(userEmail);
     if (response != null) {
+      keyPair = await futureKeyPair;
       var responseJson = json.decode(response.body);
-      var responsePass = responseJson["user_password"];
-      if(userPassword != responsePass){
-        this.setState(() {
+      var encryptedPass = responseJson["user_password"];
+      String decryptedPass = decrypt(encryptedPass, keyPair.privateKey);
+      if(userPassword != decryptedPass){
+        setState(() {
           _password.clear();
           _inauthPassword = true;
         });
@@ -178,6 +180,7 @@ class LoginPageState extends State<LoginPage> {
       print(response.body.toString());
       httpRequestStatus = HttpRequestStatus.DONE;
     } else {
+      print(response.statusCode);
       httpRequestStatus = HttpRequestStatus.ERROR;
     }
     return httpRequestStatus;
@@ -190,14 +193,8 @@ class LoginPageState extends State<LoginPage> {
     );
     if (result != null){
       keyPair = await futureKeyPair;
-
-      print(result["user_password"].runtimeType);
-
       result["user_password"] = encrypt(result["user_password"], keyPair.publicKey);
-      // String decryptedPassword = decrypt(encryptedPassword, keyPair.privateKey);
-      // print(decryptedPassword);
-      print(result["user_password"].runtimeType);
-
+      print(result["user_password"]);
       HttpRequestStatus httpRequestStatus = await createUser(result);
       if (httpRequestStatus == HttpRequestStatus.DONE) {
         setState(() {
@@ -275,13 +272,6 @@ class LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: ScreenUtil().setHeight(50),
                             ),
-                            // Text(
-                            //   "Username",
-                            //   style: TextStyle(
-                            //     fontSize: ScreenUtil().setSp(35),
-                            //     fontFamily: "Poppins-Medium",
-                            //   ),
-                            // ),
                             _inauthEmail ?
                               TextField(
                                 controller: _username,
@@ -300,10 +290,14 @@ class LoginPageState extends State<LoginPage> {
                                   hintStyle: TextStyle(
                                     color: Colors.red,
                                     fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   errorText: _validateUsername 
                                     ? 'Username Can\'t Be Empty'
-                                    : null 
+                                    : null,
+                                  errorStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ), 
                                 ),
                               )
                               : TextField(
@@ -326,19 +320,15 @@ class LoginPageState extends State<LoginPage> {
                                   ),
                                   errorText: _validateUsername 
                                     ? 'Username Can\'t Be Empty'
-                                    : null 
+                                    : null, 
+                                  errorStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             SizedBox(
                               height: ScreenUtil().setHeight(50),
                             ),
-                            // Text(
-                            //   "Password",
-                            //   style: TextStyle(
-                            //     fontSize: ScreenUtil().setSp(35),
-                            //     fontFamily: "Poppins-Medium",
-                            //   ),
-                            // ),
                             _inauthPassword ?
                               TextField(
                                 controller: _password,
@@ -358,10 +348,14 @@ class LoginPageState extends State<LoginPage> {
                                   hintStyle: TextStyle(
                                     color: Colors.red,
                                     fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                   errorText: _validatePassword
                                       ? 'Password Can\'t Be Empty'
                                       : null,
+                                  errorStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               )
                             : TextField(
@@ -386,6 +380,9 @@ class LoginPageState extends State<LoginPage> {
                                   errorText: _validatePassword
                                       ? 'Password Can\'t Be Empty'
                                       : null,
+                                  errorStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             SizedBox(
@@ -538,6 +535,16 @@ class LoginPageState extends State<LoginPage> {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
+                                setState((){
+                                  _username.clear();
+                                  _password.clear();
+                                  _forgottenUsername.clear();
+                                  _validateUsername = false;
+                                  _validatePassword = false;
+                                  _isSelected = false;
+                                  _inauthEmail = false;
+                                  _inauthPassword = false;
+                                });
                                 _navigateAndDisplaySignUp(context);
                               },
                               child: Center(
