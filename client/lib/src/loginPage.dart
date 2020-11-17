@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flushbar/flushbar.dart';
 // import 'package:rsa_encrypt/rsa_encrypt.dart';
-import '../main.dart';
 import 'signUpPage.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import './homePage.dart';
 // import './rsa.dart';
 
 // status of any http request
@@ -137,7 +137,7 @@ class LoginPageState extends State<LoginPage> {
   Future getUserByEmail(String email) async {
     var specificUrl = _usersUrl + '/' + email;
     final response = await http.get(specificUrl);
-    if (response.statusCode == 200){
+    if (response.statusCode == 200) {
       return response;
     } else {
       this.setState(() {
@@ -149,7 +149,8 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _authenticateUserCred(String userEmail, String userPassword) async {
+  Future<void> _authenticateUserCred(
+      String userEmail, String userPassword) async {
     final response = await getUserByEmail(userEmail);
     if (response != null) {
       // print(response.body);
@@ -160,7 +161,7 @@ class LoginPageState extends State<LoginPage> {
       // var encryptedPass = responseJson["user_password"];
       // String decryptedPass = decrypt(encryptedPass, keyPair.privateKey);
       // print(decryptedPass);
-      if(userPassword != responsePassword){
+      if (userPassword != responsePassword) {
         setState(() {
           _password.clear();
           _isPasswordAuthenticated = false;
@@ -169,8 +170,7 @@ class LoginPageState extends State<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  MyHomePage(title: 'KHangout')),
+              builder: (context) => MyHomePage(title: 'KHangout')),
         );
       }
     }
@@ -179,8 +179,8 @@ class LoginPageState extends State<LoginPage> {
   Future createUser(Map<String, dynamic> userInfo) async {
     var httpRequestStatus = HttpRequestStatus.NOT_DONE;
     final response = await http.post(_usersUrl,
-      headers: _headers, body: json.encode(userInfo));
-    if (response.statusCode == 200) { 
+        headers: _headers, body: json.encode(userInfo));
+    if (response.statusCode == 200) {
       print(response.body.toString());
       httpRequestStatus = HttpRequestStatus.DONE;
     } else {
@@ -195,7 +195,7 @@ class LoginPageState extends State<LoginPage> {
       context,
       MaterialPageRoute(builder: (context) => SignUpPage()),
     );
-    if (result != null){
+    if (result != null) {
       // keyPair = await futureKeyPair;
       // result["user_password"] = encrypt(result["user_password"], keyPair.publicKey);
       // print(result["user_password"]);
@@ -207,7 +207,7 @@ class LoginPageState extends State<LoginPage> {
         Flushbar(
           title: "Account Created!",
           message: "Thank you for joining KHangouts!",
-          duration:   Duration(seconds: 3),
+          duration: Duration(seconds: 3),
         )..show(context);
       }
     }
@@ -281,60 +281,65 @@ class LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
-                            !_isEmailAuthenticated ?
-                              TextField(
-                                controller: _username,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.person,
-                                    color: Colors.blue,
+                            !_isEmailAuthenticated
+                                ? TextField(
+                                    controller: _username,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.person,
+                                        color: Colors.blue,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red),
+                                      ),
+                                      hintText:
+                                          "Invalid Username, re-enter/signup",
+                                      hintStyle: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      errorText: _validateUsername
+                                          ? 'Username Can\'t Be Empty'
+                                          : null,
+                                      errorStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                : TextField(
+                                    controller: _username,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.person,
+                                        color: Colors.blue,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.deepPurple),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.blue),
+                                      ),
+                                      hintText: "Insert username..",
+                                      hintStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15.0,
+                                      ),
+                                      errorText: _validateUsername
+                                          ? 'Username Can\'t Be Empty'
+                                          : null,
+                                      errorStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                  enabledBorder: UnderlineInputBorder(      
-                                    borderSide: BorderSide(color: Colors.red),   
-                                  ),  
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red),
-                                  ),
-                                  hintText: "Invalid Username, re-enter/signup",
-                                  hintStyle: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  errorText: _validateUsername 
-                                    ? 'Username Can\'t Be Empty'
-                                    : null,
-                                  errorStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ), 
-                                ),
-                              )
-                              : TextField(
-                                controller: _username,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.person,
-                                    color: Colors.blue,
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(      
-                                    borderSide: BorderSide(color: Colors.deepPurple),   
-                                  ),  
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                  hintText: "Insert username..",
-                                  hintStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15.0,
-                                  ),
-                                  errorText: _validateUsername 
-                                    ? 'Username Can\'t Be Empty'
-                                    : null, 
-                                  errorStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
                             SizedBox(
                               height: ScreenUtil().setHeight(50),
                             ),
@@ -350,62 +355,67 @@ class LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: ScreenUtil().setHeight(30),
                             ),
-                            !_isPasswordAuthenticated ?
-                              TextField(
-                                controller: _password,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.lock,
-                                    color: Colors.blue,
+                            !_isPasswordAuthenticated
+                                ? TextField(
+                                    controller: _password,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.lock,
+                                        color: Colors.blue,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red),
+                                      ),
+                                      hintText:
+                                          "Invalid Password, please re-enter",
+                                      hintStyle: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      errorText: _validatePassword
+                                          ? 'Password Can\'t Be Empty'
+                                          : null,
+                                      errorStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                : TextField(
+                                    controller: _password,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.lock,
+                                        color: Colors.blue,
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.deepPurple),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.blue),
+                                      ),
+                                      hintText: "Insert password..",
+                                      hintStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 15.0,
+                                      ),
+                                      errorText: _validatePassword
+                                          ? 'Password Can\'t Be Empty'
+                                          : null,
+                                      errorStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                  enabledBorder: UnderlineInputBorder(      
-                                    borderSide: BorderSide(color: Colors.red),   
-                                  ),  
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red),
-                                  ),
-                                  hintText: "Invalid Password, please re-enter",
-                                  hintStyle: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  errorText: _validatePassword
-                                      ? 'Password Can\'t Be Empty'
-                                      : null,
-                                  errorStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            : TextField(
-                                controller: _password,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.lock,
-                                    color: Colors.blue,
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(      
-                                    borderSide: BorderSide(color: Colors.deepPurple),   
-                                  ),  
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                  ),
-                                  hintText: "Insert password..",
-                                  hintStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15.0,
-                                  ),
-                                  errorText: _validatePassword
-                                      ? 'Password Can\'t Be Empty'
-                                      : null,
-                                  errorStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
                             SizedBox(
                               height: ScreenUtil().setHeight(35),
                             ),
@@ -485,7 +495,7 @@ class LoginPageState extends State<LoginPage> {
                                   } else {
                                     _validateUsername = false;
                                   }
-                                  if (_password.text.isEmpty){
+                                  if (_password.text.isEmpty) {
                                     _validatePassword = true;
                                     _isPasswordAuthenticated = true;
                                   } else {
@@ -493,7 +503,8 @@ class LoginPageState extends State<LoginPage> {
                                   }
                                 });
                                 if (!_validateUsername && !_validatePassword) {
-                                  _authenticateUserCred(_username.text, _password.text); 
+                                  _authenticateUserCred(
+                                      _username.text, _password.text);
                                 }
                               },
                               child: Center(
@@ -556,7 +567,7 @@ class LoginPageState extends State<LoginPage> {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                setState((){
+                                setState(() {
                                   _username.clear();
                                   _password.clear();
                                   _forgottenUsername.clear();
