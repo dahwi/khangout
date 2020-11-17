@@ -301,7 +301,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const SizedBox(width: 8),
                                   TextButton(
                                     child: const Text('JOIN'),
-                                    onPressed: () {/* ... */},
+                                    onPressed: () async {
+                                      await _showJoinDialog();
+
+                                      Scaffold.of(context)
+                                      ..removeCurrentSnackBar()
+                                      ..showSnackBar(SnackBar(
+                                        content: Text("Succesfully joined the meeting!"),
+                                        duration: Duration(seconds: 3),
+                                      ));
+                                    },
                                   ),
                                   const SizedBox(width: 8),
                                 ],
@@ -327,6 +336,42 @@ class _MyHomePageState extends State<MyHomePage> {
                 tooltip: 'Add',
                 child: Icon(Icons.add),
               )), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  // A method to show join dialog when a user clicks the join button
+  Future<void> _showJoinDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('COVID Questionnaire'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Have you experienced any of the symptoms below within the past 14 days?'),
+                Text('\n'),
+                Text('1) A tempurture of 100.4°F or higher.'),
+                Text('2) Have had close contact or cared for someone with COVID-19.'),
+                Text('3) Have returned from travel from outside the United States or cruise ship or river boat.'),
+                Text('4) Have been directed to self-quarantine by a health care provider.'),
+                Text('5) Have been directed to self-quarantine by the Country or State Department of Public Health.'),
+                Text('\n'),
+                Text('If you have not experienced any of the symptoms above..'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('JOIN'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
