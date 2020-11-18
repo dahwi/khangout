@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'homePage.dart';
 
+import 'dart:async';
+
 class ViewMorePage extends StatelessWidget {
   final Hangout hangout;
 
@@ -125,15 +127,7 @@ class ViewMorePage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
-        tooltip: 'Join',
-        icon: Icon(Icons.add),
-        label: Text("Join"),
-      ),
+      )
     );
   }
 }
