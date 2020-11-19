@@ -1,4 +1,5 @@
 import 'controller/hangout_controller.dart';
+import 'controller/userHangout_controller.dart';
 import 'controller/user_controller.dart';
 import 'server.dart';
 
@@ -56,6 +57,10 @@ class ServerChannel extends ApplicationChannel {
 
     router.route('/hangouts/[:id]').link(() => HangoutController(context));
     router.route('/users/[:email]').link(() => UserController(context));
+    router
+        .route('/userhangouts/[:id]')
+        .link(() => UserHangoutController(context));
+
     return router;
   }
 }
