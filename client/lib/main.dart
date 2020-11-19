@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import './src/loginPage.dart';
-import 'src/rsa.dart';
 
 main() {
-  RSA rsa = new RSA();
-  futureKeyPair = rsa.getKeyPair();
   runApp(MyApp());
 }
 
