@@ -54,8 +54,9 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final String email;
 
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.email}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
