@@ -167,7 +167,7 @@ class LoginPageState extends State<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => MyHomePage(title: 'KHangout', email: userEmail)),
+              builder: (context) => MyHomePage(title: 'KHangout', userId: responseJson['id'])),
         );
       }
     }
