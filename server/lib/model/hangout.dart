@@ -32,6 +32,9 @@ class _Hangout {
   @Column()
   String hangout_description;
 
+  @Column(nullable: false, databaseType: ManagedPropertyType.bigInteger)
+  int creater;
+  
   // // Convert a Hangout into a Map. The keys must correspond to the names of the
   // // columns in the database.
   // Map<String, dynamic> toMap() {
