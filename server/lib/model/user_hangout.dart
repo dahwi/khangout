@@ -7,9 +7,9 @@ class users_hangouts {
   @primaryKey
   int id;
 
-  @Column(nullable: false)
+  @Column(nullable: false, databaseType: ManagedPropertyType.bigInteger)
   String user_id;
 
-  @Column(nullable: false)
+  @Column(nullable: false, databaseType: ManagedPropertyType.bigInteger)
   String hangout_id;
 }
