@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flushbar/flushbar.dart';
-// import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'signUpPage.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import './homePage.dart';
-// import './rsa.dart';
+import 'package:crypto/crypto.dart';
 
 // status of any http request
 enum HttpRequestStatus { NOT_DONE, DONE, ERROR }
@@ -153,15 +152,13 @@ class LoginPageState extends State<LoginPage> {
       String userEmail, String userPassword) async {
     final response = await getUserByEmail(userEmail);
     if (response != null) {
-      // print(response.body);
-      // keyPair = await futureKeyPair;
-      // print(keyPair.runtimeType);
+      var bytes = utf8.encode("foobar");
+      var inputPass = utf8.encode(userPassword);
+      var hmacSha256 = new Hmac(sha256, inputPass);
+      var digestPass = hmacSha256.convert(bytes).toString();
       var responseJson = json.decode(response.body);
       var responsePassword = responseJson["user_password"];
-      // var encryptedPass = responseJson["user_password"];
-      // String decryptedPass = decrypt(encryptedPass, keyPair.privateKey);
-      // print(decryptedPass);
-      if (userPassword != responsePassword) {
+      if (digestPass != responsePassword) {
         setState(() {
           _password.clear();
           _isPasswordAuthenticated = false;
@@ -170,7 +167,7 @@ class LoginPageState extends State<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => MyHomePage(title: 'KHangout')),
+              builder: (context) => MyHomePage(title: 'KHangout', email: userEmail)),
         );
       }
     }
@@ -178,6 +175,10 @@ class LoginPageState extends State<LoginPage> {
 
   Future createUser(Map<String, dynamic> userInfo) async {
     var httpRequestStatus = HttpRequestStatus.NOT_DONE;
+    var bytes = utf8.encode("foobar");
+    userInfo['user_password'] = utf8.encode(userInfo['user_password']);
+    var hmacSha256 = new Hmac(sha256, userInfo['user_password']);
+    userInfo['user_password'] = hmacSha256.convert(bytes).toString();
     final response = await http.post(_usersUrl,
         headers: _headers, body: json.encode(userInfo));
     if (response.statusCode == 200) {
