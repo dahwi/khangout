@@ -1,5 +1,4 @@
 import 'package:aqueduct/aqueduct.dart';
-import '../model/hangout.dart';
 import '../model/user_hangout.dart';
 import '../server.dart';
 
@@ -12,7 +11,7 @@ class UserHangoutController extends ResourceController {
   // get a list of hangouts
   @Operation.get()
   Future<Response> getAllUserHangouts() async {
-    final hangoutQuery = Query<UserHangout>(context);
+    final hangoutQuery = Query<UserHangouts>(context);
     final hangouts = await hangoutQuery.fetch();
 
     return Response.ok(hangouts);
@@ -33,14 +32,13 @@ class UserHangoutController extends ResourceController {
 
   // POST; Insert new hangout info into the database
   // The request will contain the JSON representation of a hangout in its body
+  //@Bind.body() List<int> userHangout
   @Operation.post()
-  Future<Response> createHangout(@Bind.body() Hangout inputHangout) async {
-    final userHangoutQuery = Query<UserHangout>(context)
-      ..values.user_id = inputHangout['creater'] as int
-      ..values.hangout_id = inputHangout['id'] as int;
+  Future<Response> createUserHangout(@Bind.body() UserHangouts userHangout) async {
+    final userHangoutQuery = Query<UserHangouts>(context)
+      ..values = userHangout;
 
     final insertedUserHangout = await userHangoutQuery.insert();
-
     return Response.ok(insertedUserHangout);
   }
 

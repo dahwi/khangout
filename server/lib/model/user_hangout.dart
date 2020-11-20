@@ -8,8 +8,8 @@ class users_hangouts {
   int id;
 
   @Column(nullable: false, databaseType: ManagedPropertyType.bigInteger)
-  String user_id;
+  int user_id;
 
   @Column(nullable: false, databaseType: ManagedPropertyType.bigInteger)
-  String hangout_id;
+  int hangout_id;
 }

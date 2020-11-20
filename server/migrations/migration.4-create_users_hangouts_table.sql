@@ -11,3 +11,6 @@ CREATE TABLE users_hangouts (
 
 ALTER SEQUENCE users_hangouts_id_seq
 OWNED BY users_hangouts.id;
+
+grant all on kzoo_user, kzoo_user_id_seq to nikhil;
+grant all on kzoo_user, kzoo_user_id_seq to binny;

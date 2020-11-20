@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'homePage.dart';
 
-import 'dart:async';
 
 class ViewMorePage extends StatelessWidget {
   final Hangout hangout;
@@ -22,10 +21,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Title',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.title,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.title,
                     color: Colors.orange[500],
@@ -35,10 +34,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Start Time',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.startTime,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.timelapse,
                     color: Colors.orange[500],
@@ -48,10 +47,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('End Time',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.endTime,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.timelapse,
                     color: Colors.orange[500],
@@ -61,10 +60,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Event Type',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.hangout_type,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.laptop_mac,
                     color: Colors.orange[500],
@@ -74,10 +73,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Category',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.category,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.playlist_add_check,
                     color: Colors.orange[500],
@@ -87,10 +86,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Location',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.hangout_location,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.location_pin,
                     color: Colors.orange[500],
@@ -100,10 +99,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Contact',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.contact,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.contact_phone,
                     color: Colors.orange[500],
@@ -113,10 +112,10 @@ class ViewMorePage extends StatelessWidget {
                 ListTile(
                   title: Text('Description',
                       style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w200)),
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w300)),
                   subtitle: Text(hangout.hangout_description,
                       style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   leading: Icon(
                     Icons.description,
                     color: Colors.orange[500],

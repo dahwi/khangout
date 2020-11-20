@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'filloutform.dart';
 import 'viewMore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flushbar/flushbar.dart';
+import './userKhangoutPage.dart';
+import './mySlide.dart';
 
 class Hangout {
+  final int id;
   final String title;
   final String startTime;
   final String endTime;
@@ -19,6 +26,7 @@ class Hangout {
   final String hangout_description;
 
   Hangout(
+      this.id,
       this.title,
       this.startTime,
       this.endTime,
@@ -30,7 +38,7 @@ class Hangout {
 
   @override
   String toString() {
-    return 'Hangout{title: $title, start: $startTime, end: $endTime, hangout_type: $hangout_type, category: $category, contact: $contact, hangout_location: $hangout_location, hangout_description: $hangout_description}';
+    return 'Hangout{id: $id, title: $title, start: $startTime, end: $endTime, hangout_type: $hangout_type, category: $category, contact: $contact, hangout_location: $hangout_location, hangout_description: $hangout_description}';
   }
 
   // // Convert a Hangout into a Map. The keys must correspond to the names of the
@@ -38,6 +46,23 @@ class Hangout {
   // Map<String, dynamic> toMap() {
   //   return {'id': id, 'title': title};
   // }
+}
+
+class UserHangout {
+  final int id;
+  final int user_id;
+  final int hangout_id;
+
+  UserHangout(
+    this.id,
+    this.user_id,
+    this.hangout_id,
+  );
+
+  @override
+  String toString() {
+    return 'UserHangout{id: $id, user_id: $user_id, hangout_id: $hangout_id';
+  }
 }
 
 // status of any http request
@@ -66,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Hangout> hangouts = [];
 
   static const _hangoutsUrl = 'http://localhost:8888/hangouts';
+  static const _userHangoutUrl = 'http://localhost:8888/userhangouts';
   static final _headers = {'Content-Type': 'application/json'};
   bool isSearching = false;
   var searchQuery = TextEditingController();
@@ -74,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Hangout> list = new List();
 
     for (int i = 0; i < data.length; i++) {
+      int id = data[i]["id"];
       String title = data[i]["title"];
       String startTime = data[i]["start_time"];
       String endTime = data[i]["end_time"];
@@ -83,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
       String hangoutLocation = data[i]["hangout_location"];
       String hangoutDescription = data[i]["hangout_description"];
 
-      Hangout hangout = new Hangout(title, startTime, endTime, hangoutType,
+      Hangout hangout = new Hangout(id, title, startTime, endTime, hangoutType,
           category, contact, hangoutLocation, hangoutDescription);
       list.add(hangout);
     }
@@ -119,7 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final response = await http.get(_hangoutsUrl);
     List responseJson = json.decode(response.body.toString());
     value.toLowerCase();
-
     responseJson.removeWhere((item) =>
         item['title'].toLowerCase() != value &&
         categorySearchHelper(value, item) != value &&
@@ -133,17 +159,41 @@ class _MyHomePageState extends State<MyHomePage> {
     final response = await http.post(_hangoutsUrl,
         headers: _headers, body: json.encode(hangoutInfo));
     if (response.statusCode == 200) {
-      print(response.body.toString());
+      Map<String, dynamic> hangout = jsonDecode(response.body);
+      HttpRequestStatus httpRequestUserHangout = await createUserHangout(widget.userId, hangout['id']);
+      if(httpRequestUserHangout == HttpRequestStatus.DONE){
+        httpRequestStatus = HttpRequestStatus.DONE;
+      }
+    } else {
+      httpRequestStatus = HttpRequestStatus.ERROR;
+    }
+    return httpRequestStatus;
+  }
+
+  Future createUserHangout(userId, hangoutId) async {
+    var httpRequestStatus = HttpRequestStatus.NOT_DONE;
+    List<int> userHangoutList = new List();
+    userHangoutList.add(userId);
+    userHangoutList.add(hangoutId);
+    Map<String, dynamic> userHangout = {
+      'user_id': userId,
+      'hangout_id': hangoutId
+    };
+    final response = await http.post(_userHangoutUrl, 
+      headers: _headers, body: json.encode(userHangout));
+    if (response.statusCode == 200){
+      print(response.body);
       httpRequestStatus = HttpRequestStatus.DONE;
     } else {
       httpRequestStatus = HttpRequestStatus.ERROR;
     }
-
     return httpRequestStatus;
   }
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context,
+      designSize: Size(750, 1334), allowFontScaling: true);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -156,12 +206,20 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         leading: Padding(
           padding: const EdgeInsets.only(left: 25.0),
-          child: Image.asset(
+          child: InkWell( 
+            onTap: () {
+              Route route = MySlide(builder: (context) => UserKhangoutPage(userId: widget.userId));
+              Navigator.push(context, route);
+            },
+            child: Image.asset(
             "assets/images/KalamazooCollege.png",
+            ),
           ),
         ),
         title: !isSearching
-            ? Text(widget.title)
+            ? Text(widget.title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
             : TextField(
                 onChanged: (value) {
                   setState(() {
@@ -221,7 +279,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Icons.chevron_right_rounded,
                                   size: 40,
                                 ),
-                                title: Text(snapshot.data[index].title ?? ""),
+                                title: Text(snapshot.data[index].title ?? "",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 subtitle: Text(
                                     '${snapshot.data[index].startTime} - ${snapshot.data[index].endTime}'),
                               ),
@@ -247,14 +309,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                   TextButton(
                                     child: const Text('JOIN'),
                                     onPressed: () async {
-                                      await _showJoinDialog();
-
-                                      Scaffold.of(context)
-                                      ..removeCurrentSnackBar()
-                                      ..showSnackBar(SnackBar(
-                                        content: Text("Succesfully joined the meeting!"),
-                                        duration: Duration(seconds: 3),
-                                      ));
+                                      HttpRequestStatus httpRequestStatus = await _showCovidDialog(widget.userId, snapshot.data[index].id);
+                                      if (httpRequestStatus == HttpRequestStatus.DONE){
+                                        var joinedHangoutTitle = snapshot.data[index].title;
+                                        Scaffold.of(context)
+                                        ..removeCurrentSnackBar()
+                                        ..showSnackBar(SnackBar(
+                                          content: Text("Succesfully joined the KHangout: $joinedHangoutTitle!"),
+                                          duration: Duration(seconds: 3),
+                                        ));
+                                      } else {
+                                        Flushbar(
+                                          title: "Unable to join..",
+                                          message: "You cannot join this hangout because you either created it or have already joined.",
+                                          duration: Duration(seconds: 5),
+                                        )..show(context);
+                                      }
                                     },
                                   ),
                                   const SizedBox(
@@ -291,7 +361,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               ListTile(
                                   leading: Icon(Icons.chevron_right_rounded,
                                       size: 40),
-                                  title: Text(snapshot.data[index].title ?? ""),
+                                  title: Text(snapshot.data[index].title ?? "",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   subtitle: Text(
                                       '${snapshot.data[index].startTime} - ${snapshot.data[index].endTime}')),
                               Row(
@@ -312,14 +386,22 @@ class _MyHomePageState extends State<MyHomePage> {
                                   TextButton(
                                     child: const Text('JOIN'),
                                     onPressed: () async {
-                                      await _showJoinDialog();
-
-                                      Scaffold.of(context)
-                                      ..removeCurrentSnackBar()
-                                      ..showSnackBar(SnackBar(
-                                        content: Text("Succesfully joined the meeting!"),
-                                        duration: Duration(seconds: 3),
-                                      ));
+                                      HttpRequestStatus httpRequestStatus = await _showCovidDialog(widget.userId, snapshot.data[index].id);
+                                      if(httpRequestStatus == HttpRequestStatus.DONE){
+                                        var joinedHangoutTitle = snapshot.data[index].title;
+                                        Scaffold.of(context)
+                                        ..removeCurrentSnackBar()
+                                        ..showSnackBar(SnackBar(
+                                          content: Text("Succesfully joined the KHangout: $joinedHangoutTitle!"),
+                                          duration: Duration(seconds: 3),
+                                        ));
+                                      } else {
+                                        Flushbar(
+                                          title: "Unable to join..",
+                                          message: "You cannot join this hangout because you either created it or have already joined.",
+                                          duration: Duration(seconds: 5),
+                                        )..show(context);
+                                      }
                                     },
                                   ),
                                   const SizedBox(width: 8),
@@ -350,33 +432,70 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // A method to show join dialog when a user clicks the join button
-  Future<void> _showJoinDialog() async {
-    return showDialog<void>(
+  Future<HttpRequestStatus> _showCovidDialog(userId, hangoutId) async {
+    return showDialog(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('COVID Questionnaire'),
+          title: Text('COVID Questionnaire',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              width: 3,
+              color: Colors.red,
+            ), 
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('Have you experienced any of the symptoms below within the past 14 days?'),
-                Text('\n'),
+                SizedBox(height: ScreenUtil().setHeight(30),), 
                 Text('1) A tempurture of 100.4°F or higher.'),
+                SizedBox(height: ScreenUtil().setHeight(30),), 
                 Text('2) Have had close contact or cared for someone with COVID-19.'),
+                SizedBox(height: ScreenUtil().setHeight(30),), 
                 Text('3) Have returned from travel from outside the United States or cruise ship or river boat.'),
+                SizedBox(height: ScreenUtil().setHeight(30),), 
                 Text('4) Have been directed to self-quarantine by a health care provider.'),
+                SizedBox(height: ScreenUtil().setHeight(30),), 
                 Text('5) Have been directed to self-quarantine by the Country or State Department of Public Health.'),
-                Text('\n'),
-                Text('If you have not experienced any of the symptoms above..'),
+                SizedBox(height: ScreenUtil().setHeight(30),), 
+                Text('If you have not experienced any of the symptoms above..',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('JOIN'),
+              child: Text('CANCEL',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
               onPressed: () {
-                Navigator.of(context).pop();
+                HttpRequestStatus httpRequestStatus = HttpRequestStatus.ERROR;
+                Navigator.of(context).pop(httpRequestStatus);
+              },
+            ),
+            TextButton(
+              child: Text('JOIN',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+              onPressed: () async {
+                HttpRequestStatus httpRequestStatus = await createUserHangout(userId, hangoutId);
+                Navigator.of(context).pop(httpRequestStatus);
               },
             ),
           ],
@@ -393,21 +512,23 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await Navigator.push(
       context,
       // Create the FillOutScreen in the next step.
-      MaterialPageRoute(builder: (context) => FillOutPage()),
+      MaterialPageRoute(builder: (context) => FillOutPage(createrId: widget.userId)),
     );
 
     // After the FillOut Screen returns a result, hide any previous snackbars
     // and show the new result.
-    Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text("Saved!"),
-        duration: Duration(seconds: 3),
-      ));
+    if(result != null){
+      Scaffold.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text("Saved!"),
+          duration: Duration(seconds: 3),
+        ));
 
-    HttpRequestStatus httpRequestStatus = await createHangout(result);
-    if (httpRequestStatus == HttpRequestStatus.DONE) {
-      setState(() {});
+      HttpRequestStatus httpRequestStatus = await createHangout(result);
+      if (httpRequestStatus == HttpRequestStatus.DONE) {
+        setState(() {});
+      }
     }
   }
 }

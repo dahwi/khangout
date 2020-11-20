@@ -3,6 +3,10 @@ import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:intl/intl.dart';
 
 class FillOutPage extends StatefulWidget {
+  final int createrId;
+
+  FillOutPage({Key key, this.createrId}) : super(key: key);
+
   @override
   _FillOutPageState createState() => _FillOutPageState();
 }
@@ -166,7 +170,7 @@ class _FillOutPageState extends State<FillOutPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Create a Meeting"),
+          title: new Text("Create a KHangout"),
         ),
         body: Form(
           key: _formKey,
@@ -304,7 +308,8 @@ class _FillOutPageState extends State<FillOutPage> {
                   'category': category.text,
                   'contact': contact.text,
                   'hangout_location': hangout_location.text,
-                  'hangout_description': hangout_description.text
+                  'hangout_description': hangout_description.text,
+                  'creater': widget.createrId
                 };
                 print(newHangout);
                 Navigator.pop(context, newHangout);
