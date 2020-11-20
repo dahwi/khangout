@@ -429,6 +429,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Icon(Icons.add),
               )), // This trailing comma makes auto-formatting nicer for build methods.
     );
+    
   }
 
   // A method to show join dialog when a user clicks the join button
