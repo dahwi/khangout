@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -322,13 +320,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                         Flushbar(
                                           title: "Unable to join..",
                                           message: "You cannot join this hangout because you either created it or have already joined.",
-                                          duration: Duration(seconds: 5),
+                                          duration: Duration(seconds: 5), 
                                         )..show(context);
                                       }
                                     },
                                   ),
                                   const SizedBox(
-                                    width: 8,
+                                    width: 8, 
                                   ),
                                 ],
                               ),
